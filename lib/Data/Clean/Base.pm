@@ -5,36 +5,48 @@ use strict;
 use warnings;
 use Log::Any '$log';
 
+use Scalar::Util qw(blessed);
+
 # VERSION
 
 sub new {
     my ($class, %opts) = @_;
+    $opts{-ref} //= ['stringify'];
     my $self = bless {opts=>\%opts}, $class;
     $log->tracef("Cleaner options: %s", \%opts);
     $self->_generate_cleaner_code;
     $self;
 }
 
-sub opt_DateTime {
-    my ($self, $on, $o) = @_;
-    die "Can only handle stringification for $on" unless $o->[0] eq 'str';
-    if ($o->[1] eq 'epoch') {
-        return '{{var}} = {{var}}->epoch';
-    } else {
-        die "Can't handle stringification option for $on: $o->[1]";
-    }
+sub command_call_method {
+    my ($self, $args) = @_;
+    return "{{var}} = {{var}}->$args->[0]";
 }
 
-sub opt_Regexp {
-    my ($self, $on, $o) = @_;
-    die "Can only handle stringification for $on" unless $o->[0] eq 'str';
-    return '{{var}} = "{{var}}->epoch"';
+sub command_deref_scalar {
+    my ($self, $args) = @_;
+    return '{{var}} = ${ {{var}} }';
 }
 
-sub opt_CODE {
-    my ($self, $on, $o) = @_;
-    die "Can only handle stringification for $on" unless $o->[0] eq 'str';
-    return "{{var}} = '$o->[1]'";
+sub command_stringify {
+    my ($self, $args) = @_;
+    return '{{var}} = "{{var}}"';
+}
+
+sub command_replace_with_ref {
+    my ($self, $args) = @_;
+    return '{{var}} = $ref';
+}
+
+sub command_replace_with_str {
+    my ($self, $args) = @_;
+    return "{{var}} = '$args->[0]'";
+}
+
+# test
+sub command_die {
+    my ($self, $args) = @_;
+    return "die";
 }
 
 sub _generate_cleaner_code {
@@ -43,23 +55,40 @@ sub _generate_cleaner_code {
 
     my (@code, @ifs_ary, @ifs_hash, @ifs_main);
 
+    my $n = 0;
     my $add_if = sub {
-        my ($ref, $act0) = @_;
+        my ($cond0, $act0) = @_;
         for ([\@ifs_ary, '$e'], [\@ifs_hash, '$h->{$k}'], [\@ifs_main, '$_']) {
-            my $act = $act0;
-            $act =~ s/\Q{{var}}\E/$_->[1]/g;
-            push @{ $_->[0] }, "    if (\$ref eq '$ref') { $act }\n";
+            my $act  = $act0 ; $act  =~ s/\Q{{var}}\E/$_->[1]/g;
+            my $cond = $cond0; $cond =~ s/\Q{{var}}\E/$_->[1]/g;
+            push @{ $_->[0] }, "    ".($n ? "els":"")."if ($cond) { $act }\n";
         }
+        $n++;
+    };
+    my $add_if_ref = sub {
+        my ($ref, $act0) = @_;
+        $add_if->("\$ref eq '$ref'", $act0);
     };
 
-    for my $on (sort keys %$opts) {
-        my $meth = "opt_$on";
-        die "Can't handle clean option '$on'" unless $self->can($meth);
-        my $act = $self->$meth($on, $opts->{$on});
-        $add_if->($on, $act);
+    for my $on (grep {/\A\w+\z/} sort keys %$opts) {
+        my $o = $opts->{$on};
+        my $meth = "command_$o->[0]";
+        die "Can't handle command $o->[0] for option '$on'" unless $self->can($meth);
+        my @args = @$o; shift @args;
+        my $act = $self->$meth(\@args);
+        $add_if_ref->($on, $act);
     }
-    $add_if->("ARRAY", '$process_array->({{var}})');
-    $add_if->("HASH" , '$process_hash->({{var}})');
+    $add_if_ref->("ARRAY", '$process_array->({{var}})');
+    $add_if_ref->("HASH" , '$process_hash->({{var}})');
+
+    for my $p ([-obj => 'blessed({{var}})'], [-ref => '$ref']) {
+        my $o = $opts->{$p->[0]};
+        next unless $o;
+        my $meth = "command_$o->[0]";
+        die "Can't handle command $o->[0] for option '$p->[0]'" unless $self->can($meth);
+        my @args = @$o; shift @args;
+        $add_if->($p->[1], $self->$meth(\@args));
+    }
 
     push @code, 'sub {'."\n";
     push @code, 'my $data = shift;'."\n";

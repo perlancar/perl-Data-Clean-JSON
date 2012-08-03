@@ -10,9 +10,10 @@ use parent qw(Data::Clean::Base);
 
 sub new {
     my ($class, %opts) = @_;
-    $opts{CODE}     //= [str => "CODE"];
-    $opts{DateTime} //= [str => 'epoch'];
-    $opts{Regexp}   //= ['str'];
+    $opts{DateTime} //= [call_method => 'epoch'];
+    $opts{Regexp}   //= ['stringify'];
+    $opts{-ref}     //= ['replace_with_ref'];
+    $opts{SCALAR}   //= ['deref_scalar'];
     $class->SUPER::new(%opts);
 }
 
@@ -61,13 +62,12 @@ other hand, generate a cleaner code using eval(), using native Perl for() loops.
 =head2 new(%opts) => $obj
 
 Create a new instance. For list of known options, see L<Data::Clean::Base>.
-Data::Clean::JSON sets the following options:
+Data::Clean::JSON sets some defaults.
 
- (
-     CODE     => [str => "CODE"],   # convert coderef to string "CODE"
-     DateTime => [str => 'epoch'],  # convert DateTime object to Unix time
-     Regexp   => ['str'],           # stringify Regexp
- )
+    $opts{DateTime} //= [call_method => 'epoch'];
+    $opts{Regexp}   //= ['stringify'];
+    $opts{-ref}     //= ['replace_with_ref'];
+    $opts{SCALAR}   //= ['deref_scalar'];
 
 =head2 $obj->clean_in_place($data) => $cleaned
 
