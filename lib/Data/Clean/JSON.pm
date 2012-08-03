@@ -73,4 +73,22 @@ Clean $data. Modify data in-place.
 
 Clean $data. Clone $data first.
 
+
+=head1 FAQ
+
+=head2 Why clone/modify? Why not directly output JSON?
+
+So that the data can be used for other stuffs, like outputting to YAML, etc.
+
+=head2 Why is it so slow?
+
+First make sure that you do not construct the Data::Clean::JSON repeatedly, as
+it initializes the cleaner code using eval(). A short benchmark:
+
+ % perl -MBench -MData::Clean::JSON -e'$c=Data::Clean::JSON->new; bench sub { $c->clone_and_clean([1..100]) }, -1'
+ 31641 calls (30358/s), 1.042s (0.0329ms/call)
+
+ % perl -MBench -MData::Clean::JSON -e'bench sub { Data::Clean::JSON->new->clone_and_clean([1..100]) }, -1'
+ 2999 calls (2714/s), 1.105s (0.369ms/call)
+
 =cut
