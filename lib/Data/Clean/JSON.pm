@@ -51,6 +51,10 @@ The design goals are good performance, good defaults, and just enough
 flexibility. The original use-case is for returning JSON response in HTTP API
 service.
 
+This module is significantly faster than L<Data::Rmap> because with Rmap you
+repeatedly invoke anonymous subroutine for each data item. This module, on the
+other hand, generate a cleaner code using eval(), using native Perl for() loops.
+
 
 =head1 METHODS
 
