@@ -23,16 +23,16 @@ sub new {
 =head1 SYNOPSIS
 
  use Data::Clean::JSON;
- my $cleaner = Data::Clean::JSON->new;    # there are some options
- my $data    = { code=>sub {}, re=>qr/abc/i };
+ my $cleanser = Data::Clean::JSON->new;    # there are some options
+ my $data     = { code=>sub {}, re=>qr/abc/i };
 
  my $cleaned;
 
  # modifies data in-place
- $cleaned = $cleaner->clean_in_place($data);
+ $cleaned = $cleanser->clean_in_place($data);
 
  # ditto, but deep clone first, return
- $cleaned = $cleaner->clone_and_clean($data);
+ $cleaned = $cleanser->clone_and_clean($data);
 
  # now output it
  use JSON;
@@ -54,7 +54,8 @@ service.
 
 This module is significantly faster than L<Data::Rmap> because with Rmap you
 repeatedly invoke anonymous subroutine for each data item. This module, on the
-other hand, generate a cleaner code using eval(), using native Perl for() loops.
+other hand, generate a cleanser code using eval(), using native Perl for()
+loops.
 
 
 =head1 METHODS
@@ -87,7 +88,8 @@ So that the data can be used for other stuffs, like outputting to YAML, etc.
 =head2 Why is it so slow?
 
 First make sure that you do not construct the Data::Clean::JSON repeatedly, as
-it initializes the cleaner code using eval(). A short benchmark:
+it during construction it generates the cleanser code using eval(). A short
+benchmark:
 
  % perl -MBench -MData::Clean::JSON -e'$c=Data::Clean::JSON->new; bench sub { $c->clone_and_clean([1..100]) }, -1'
  31641 calls (30358/s), 1.042s (0.0329ms/call)

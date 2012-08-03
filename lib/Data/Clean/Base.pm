@@ -13,8 +13,8 @@ sub new {
     my ($class, %opts) = @_;
     $opts{-ref} //= ['stringify'];
     my $self = bless {opts=>\%opts}, $class;
-    $log->tracef("Cleaner options: %s", \%opts);
-    $self->_generate_cleaner_code;
+    $log->tracef("Cleanser options: %s", \%opts);
+    $self->_generate_cleanser_code;
     $self;
 }
 
@@ -49,7 +49,7 @@ sub command_die {
     return "die";
 }
 
-sub _generate_cleaner_code {
+sub _generate_cleanser_code {
     my $self = shift;
     my $opts = $self->{opts};
 
@@ -101,7 +101,7 @@ sub _generate_cleaner_code {
     push @code, '}'."\n";
 
     my $code = join("", @code).";";
-    $log->tracef("Cleaner code:\n%s", $code);
+    $log->tracef("Cleanser code:\n%s", $code);
     eval "\$self->{code} = $code";
     die "Can't generate code: $@" if $@;
 }
