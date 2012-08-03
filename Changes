@@ -1,5 +1,12 @@
 Revision history for Data-Clean-JSON
 
+0.02     2012-08-03 (SHARYANTO)
+
+         - Tweak default settings.
+
+         - Add basic tests.
+
+
 0.01     2012-08-03 (SHARYANTO)
 
          First release. Incomplete and no tests yet.
