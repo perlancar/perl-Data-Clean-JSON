@@ -28,7 +28,7 @@ sub new {
  my $cleaned;
 
  # modifies data in-place
- $cleaned = $cleaner->clean($data);
+ $cleaned = $cleaner->clean_in_place($data);
 
  # ditto, but deep clone first, return
  $cleaned = $cleaner->clone_and_clean($data);
