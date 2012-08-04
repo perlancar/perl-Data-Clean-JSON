@@ -1,5 +1,10 @@
 Revision history for Data-Clean-JSON
 
+0.05     2012-08-05 (SHARYANTO)
+
+         - Fix circular handling.
+
+
 0.04     2012-08-04 (SHARYANTO)
 
          - More documentation.
