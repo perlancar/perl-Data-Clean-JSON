@@ -72,7 +72,7 @@ sub _generate_cleanser_code {
 
     my $circ = $opts->{-circular};
     if ($circ) {
-        $add_if->('$ref && $refs{$ref}++', '{{var}} = "CIRCULAR"; last');
+        $add_if->('$ref && $refs{ {{var}} }++', '{{var}} = "CIRCULAR"; last');
     }
 
     for my $on (grep {/\A\w+\z/} sort keys %$opts) {
@@ -98,11 +98,12 @@ sub _generate_cleanser_code {
 
     push @code, 'sub {'."\n";
     push @code, 'my $data = shift;'."\n";
-    push @code, 'my %refs;'."\n" if $circ;
+    push @code, 'state %refs;'."\n" if $circ;
     push @code, 'state $process_array;'."\n";
     push @code, 'state $process_hash;'."\n";
     push @code, 'if (!$process_array) { $process_array = sub { my $a = shift; for my $e (@$a) { my $ref=ref($e);'."\n".join("", @ifs_ary).'} } }'."\n";
     push @code, 'if (!$process_hash) { $process_hash = sub { my $h = shift; for my $k (keys %$h) { my $ref=ref($h->{$k});'."\n".join("", @ifs_hash).'} } }'."\n";
+    push @code, '%refs = ();'."\n" if $circ;
     push @code, 'for ($data) { my $ref=ref($_);'."\n".join("", @ifs_main).'}'."\n";
     push @code, '$data'."\n";
     push @code, '}'."\n";

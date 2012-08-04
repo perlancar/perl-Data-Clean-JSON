@@ -10,12 +10,16 @@ use Test::More 0.96;
 
 my $c = Data::Clean::JSON->new;
 my $data;
+my $cdata;
 
-is_deeply($c->clone_and_clean({code=>sub{} , date=>DateTime->from_epoch(epoch=>1001), scalar=>\1, obj=>bless({},"Foo")}),
-          {                    code=>"CODE", date=>1001,                              scalar=>1 , obj=>"Foo"}, "#1");
+$cdata = $c->clone_and_clean({code=>sub{} , date=>DateTime->from_epoch(epoch=>1001), scalar=>\1, obj=>bless({},"Foo")});
+is_deeply($cdata, {code=>"CODE", date=>1001, scalar=>1 , obj=>"Foo"}, "cleaning up");
 
-$data = [1]; push @$data, $data;
-is_deeply($c->clone_and_clean($data), [1, "CIRCULAR"], "circular");
+$data  = [1, [2]]; push @$data, $data;
+$cdata = $c->clone_and_clean($data);
+#use Data::Dump; dd $data; dd $cdata;
+is_deeply($cdata, [1, [2], "CIRCULAR"], "circular")
+    or diag explain $cdata;
 
 # XXX test: re
 
