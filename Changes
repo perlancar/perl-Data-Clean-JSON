@@ -1,5 +1,12 @@
 Revision history for Data-Clean-JSON
 
+0.04     2012-08-04 (SHARYANTO)
+
+         - More documentation.
+
+         - Handle circular references.
+
+
 0.03     2012-08-03 (SHARYANTO)
 
          No functional changes. Fix English (cleaner -> cleanser).
