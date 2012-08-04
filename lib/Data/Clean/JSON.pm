@@ -58,6 +58,11 @@ repeatedly invoke anonymous subroutine for each data item. This module, on the
 other hand, generate a cleanser code using eval(), using native Perl for()
 loops.
 
+The generated cleanser code is logged using L<Log::Any> at trace level. You can
+see it, e.g. using L<Log::Any::App>:
+
+ % TRACE=1 perl -MLog::Any::App -MData::Clean::JSON -e'$c=Data::Clean::JSON->new; ...'
+
 
 =head1 METHODS
 
@@ -87,7 +92,7 @@ Clean $data. Clone $data first.
 
 So that the data can be used for other stuffs, like outputting to YAML, etc.
 
-=head2 Why is it so slow?
+=head2 Why is it slow?
 
 First make sure that you do not construct the Data::Clean::JSON repeatedly, as
 it during construction it generates the cleanser code using eval(). A short
@@ -96,7 +101,23 @@ benchmark:
  % perl -MBench -MData::Clean::JSON -e'$c=Data::Clean::JSON->new; bench sub { $c->clone_and_clean([1..100]) }, -1'
  31641 calls (30358/s), 1.042s (0.0329ms/call)
 
- % perl -MBench -MData::Clean::JSON -e'bench sub { Data::Clean::JSON->new->clone_and_clean([1..100]) }, -1'
+ % perl -MBenchglean::JSON->new->clone_and_clean([1..100]) }, -1'
  2999 calls (2714/s), 1.105s (0.369ms/call)
+
+Second, you can turn off some checks if you are sure you will not be getting bad
+data. For example, if you know that your input will not contain circular
+references, you can turn off circular detection:
+
+ $cleanser = Data::Clean::JSON->new(-circular => 0);
+
+Benchmark:
+
+ % perl -MBench -MData::Clean::JSON -e'$c=Data::Clean::JSON->new; $data=[1..100]; bench sub { $c->clean_in_place($data) }, -1'
+ 38461 calls (28086/s), 1.369s (0.0356ms/call)
+
+ % perl -MBench -MData::Clean::JSON -e'$c=Data::Clean::JSON->new(-circular=>0); $data=[1..100]; bench sub { $c->clean_in_place($data) }, -1'
+ 45455 calls (32094/s), 1.416s (0.0312ms/call)
+
+The less number of actions you do, the faster the cleansing process will be.
 
 =cut
