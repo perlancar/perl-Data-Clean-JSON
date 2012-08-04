@@ -77,6 +77,7 @@ sub _generate_cleanser_code {
 
     for my $on (grep {/\A\w+\z/} sort keys %$opts) {
         my $o = $opts->{$on};
+        next unless $o;
         my $meth = "command_$o->[0]";
         die "Can't handle command $o->[0] for option '$on'" unless $self->can($meth);
         my @args = @$o; shift @args;
