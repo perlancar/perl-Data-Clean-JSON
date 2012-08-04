@@ -70,6 +70,11 @@ sub _generate_cleanser_code {
         $add_if->("\$ref eq '$ref'", $act0);
     };
 
+    my $circ = $opts->{-circular};
+    if ($circ) {
+        $add_if->('$ref && $refs{$ref}++', '{{var}} = "CIRCULAR"; last');
+    }
+
     for my $on (grep {/\A\w+\z/} sort keys %$opts) {
         my $o = $opts->{$on};
         my $meth = "command_$o->[0]";
@@ -92,6 +97,7 @@ sub _generate_cleanser_code {
 
     push @code, 'sub {'."\n";
     push @code, 'my $data = shift;'."\n";
+    push @code, 'my %refs;'."\n" if $circ;
     push @code, 'state $process_array;'."\n";
     push @code, 'state $process_hash;'."\n";
     push @code, 'if (!$process_array) { $process_array = sub { my $a = shift; for my $e (@$a) { my $ref=ref($e);'."\n".join("", @ifs_ary).'} } }'."\n";
@@ -127,13 +133,57 @@ sub clone_and_clean {
 
 =head2 new(%opts) => $obj
 
-Create a new instance. Known options:
+Create a new instance.
+
+Options specify what to do with problematic kinds of data. Option keys are
+either reference types or class names, or C<-obj> (to refer to objects, a.k.a.
+blessed references), C<-circular> (to refer to circular references), C<-ref> (to
+refer to references, used to process references not handled by other options).
+Option values are arrayrefs, the first element of the array is command name, to
+specify what to do with the reference/class. The rest are command arguments.
+Available commands:
 
 =over 4
 
-=item *
+=item * ['stringify']
+
+This will stringify C<{}> to something like C<HASH(0x135f998)>.
+
+=item * ['replace_with_ref']
+
+This will replace C<{}> with C<HASH>.
+
+=item * ['replace_with_str', STR]
+
+This will replace C<{}> with I<STR>.
+
+=item * ['call_method']
+
+This will call a method and use its return as the replacement.
+
+=item * ['deref_scalar']
+
+This will replace \1 with 1.
 
 =back
+
+Special commands for C<-circular>:
+
+=over 4
+
+=item * ['detect_circular']
+
+Keep a count for each reference. When a circular reference is found, replace it
+with <"CIRCULAR">.
+
+=back
+
+Default options:
+
+ -ref => 'stringify'
+
+Note that arrayrefs and hashrefs are always walked into, so it's not trapped by
+C<-ref>.
 
 =head2 $obj->clean_in_place($data) => $cleaned
 

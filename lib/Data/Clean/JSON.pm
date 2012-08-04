@@ -10,10 +10,11 @@ use parent qw(Data::Clean::Base);
 
 sub new {
     my ($class, %opts) = @_;
-    $opts{DateTime} //= [call_method => 'epoch'];
-    $opts{Regexp}   //= ['stringify'];
-    $opts{-ref}     //= ['replace_with_ref'];
-    $opts{SCALAR}   //= ['deref_scalar'];
+    $opts{DateTime}  //= [call_method => 'epoch'];
+    $opts{Regexp}    //= ['stringify'];
+    $opts{SCALAR}    //= ['deref_scalar'];
+    $opts{-ref}      //= ['replace_with_ref'];
+    $opts{-circular} //= ['detect_circular'];
     $class->SUPER::new(%opts);
 }
 
@@ -65,10 +66,11 @@ loops.
 Create a new instance. For list of known options, see L<Data::Clean::Base>.
 Data::Clean::JSON sets some defaults.
 
-    $opts{DateTime} //= [call_method => 'epoch'];
-    $opts{Regexp}   //= ['stringify'];
-    $opts{-ref}     //= ['replace_with_ref'];
-    $opts{SCALAR}   //= ['deref_scalar'];
+    DateTime  => [call_method => 'epoch']
+    Regexp    => ['stringify']
+    SCALAR    => ['deref_scalar']
+    -ref      => ['replace_with_ref']
+    -circular => ['detect_circular']
 
 =head2 $obj->clean_in_place($data) => $cleaned
 
