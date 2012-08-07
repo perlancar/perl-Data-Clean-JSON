@@ -55,7 +55,7 @@ service.
 
 This module is significantly faster than L<Data::Rmap> because with Rmap you
 repeatedly invoke anonymous subroutine for each data item. This module, on the
-other hand, generate a cleanser code using eval(), using native Perl for()
+other hand, generates a cleanser code using eval(), using native Perl for()
 loops.
 
 The generated cleanser code is logged using L<Log::Any> at trace level. You can
@@ -94,9 +94,9 @@ So that the data can be used for other stuffs, like outputting to YAML, etc.
 
 =head2 Why is it slow?
 
-First make sure that you do not construct the Data::Clean::JSON repeatedly, as
-it during construction it generates the cleanser code using eval(). A short
-benchmark (run on my slow Atom netbook):
+First make sure that you do not construct the Data::Clean::JSON object
+repeatedly, as the constructor generates the cleanser code first using eval(). A
+short benchmark (run on my slow Atom netbook):
 
  % bench -MData::Clean::JSON -b'$c=Data::Clean::JSON->new' \
      'Data::Clean::JSON->new->clone_and_clean([1..100])' \
@@ -124,6 +124,6 @@ Benchmark:
  nocirc: 13161 calls (12885/s), 1.021s (0.0776ms/call)
  Fastest is nocirc (1.367x circ)
 
-The less number of actions you do, the faster the cleansing process will be.
+The less number of checks you do, the faster the cleansing process will be.
 
 =cut
