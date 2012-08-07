@@ -137,13 +137,13 @@ sub clone_and_clean {
 
 Create a new instance.
 
-Options specify what to do with problematic kinds of data. Option keys are
-either reference types or class names, or C<-obj> (to refer to objects, a.k.a.
-blessed references), C<-circular> (to refer to circular references), C<-ref> (to
-refer to references, used to process references not handled by other options).
-Option values are arrayrefs, the first element of the array is command name, to
-specify what to do with the reference/class. The rest are command arguments.
-Available commands:
+Options specify what to do with problematic data. Option keys are either
+reference types or class names, or C<-obj> (to refer to objects, a.k.a. blessed
+references), C<-circular> (to refer to circular references), C<-ref> (to refer
+to references, used to process references not handled by other options). Option
+values are arrayrefs, the first element of the array is command name, to specify
+what to do with the reference/class. The rest are command arguments. Available
+commands:
 
 =over 4
 
