@@ -149,23 +149,25 @@ commands:
 
 =item * ['stringify']
 
-This will stringify C<{}> to something like C<HASH(0x135f998)>.
+This will stringify a reference like C<{}> to something like C<HASH(0x135f998)>.
 
 =item * ['replace_with_ref']
 
-This will replace C<{}> with C<HASH>.
+This will replace a reference like C<{}> with C<HASH>.
 
 =item * ['replace_with_str', STR]
 
-This will replace C<{}> with I<STR>.
+This will replace a reference like C<{}> with I<STR>.
 
 =item * ['call_method']
 
-This will call a method and use its return as the replacement.
+This will call a method and use its return as the replacement. For example:
+DateTime->from_epoch(epoch=>1000) when processed with [call_method => 'epoch']
+will become 1000.
 
 =item * ['deref_scalar']
 
-This will replace \1 with 1.
+This will replace a scalar reference like \1 with 1.
 
 =back
 
