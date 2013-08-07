@@ -109,7 +109,7 @@ sub _generate_cleanser_code {
     push @code, '}'."\n";
 
     my $code = join("", @code).";";
-    $log->tracef("Cleanser code:\n%s", $code);
+    $log->tracef("Cleanser code:\n%s", $code) if $ENV{LOG_CLEANSER_CODE};
     eval "\$self->{code} = $code";
     die "Can't generate code: $@" if $@;
 }
@@ -196,5 +196,17 @@ Clean $data. Modify data in-place.
 =head2 $obj->clone_and_clean($data) => $cleaned
 
 Clean $data. Clone $data first.
+
+
+=head1 ENVIRONMENT
+
+=over
+
+=item * LOG_CLEANSER_CODE => BOOL (default: 0)
+
+Can be enabled if you want to see the generated cleanser code. It is logged at
+level C<trace>.
+
+=back
 
 =cut
