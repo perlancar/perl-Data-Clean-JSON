@@ -15,6 +15,7 @@ sub new {
     $opts{SCALAR}    //= ['deref_scalar'];
     $opts{-ref}      //= ['replace_with_ref'];
     $opts{-circular} //= ['detect_circular'];
+    $opts{-obj}      //= ['unbless'];
     $class->SUPER::new(%opts);
 }
 
@@ -76,6 +77,7 @@ Data::Clean::JSON sets some defaults.
     SCALAR    => ['deref_scalar']
     -ref      => ['replace_with_ref']
     -circular => ['detect_circular']
+    -obj      => ['unbless']
 
 =head2 $obj->clean_in_place($data) => $cleaned
 
@@ -125,5 +127,12 @@ Benchmark:
  Fastest is nocirc (1.367x circ)
 
 The less number of checks you do, the faster the cleansing process will be.
+
+=head2 Why am I getting 'Not a CODE reference at lib/Data/Clean/Base.pm line xxx'?
+
+[2013-08-07 ] This error message is from Data::Clone::clone() when it is cloning
+an object. If you are cleaning objects, instead of using clone_and_clean(), try
+using clean_in_place(). Or, clone your data first using something else like
+L<Storable>.
 
 =cut
