@@ -1,5 +1,20 @@
 Revision history for Data-Clean-JSON
 
+0.06     2013-08-07 (SHARYANTO) (not yet released)
+
+         [INCOMPATIBLE CHANGES]
+
+         - Now by default clean objects by unblessing them instead of turning
+           them into class-name strings.
+
+         - No longer log cleanser code by default. You need to enable
+           using LOG_CLEANSER_CODE.
+
+         [ENHANCEMENTS]
+
+         - Add command: unbless.
+
+
 0.05     2012-08-05 (SHARYANTO)
 
          - Fix circular handling.
@@ -14,7 +29,7 @@ Revision history for Data-Clean-JSON
 
 0.03     2012-08-03 (SHARYANTO)
 
-         No functional changes. Fix English (cleaner -> cleanser).
+         - No functional changes. Fix English (cleaner -> cleanser).
 
 
 0.02     2012-08-03 (SHARYANTO)
@@ -26,4 +41,4 @@ Revision history for Data-Clean-JSON
 
 0.01     2012-08-03 (SHARYANTO)
 
-         First release. Incomplete and no tests yet.
+         - First release. Incomplete and no tests yet.

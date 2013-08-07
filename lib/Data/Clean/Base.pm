@@ -138,6 +138,8 @@ sub clone_and_clean {
 1;
 # ABSTRACT: Base class for Data::Clean::*
 
+=for Pod::Coverage ^(command_.+)$
+
 =head1 METHODS
 
 =head2 new(%opts) => $obj
