@@ -43,6 +43,13 @@ sub command_replace_with_str {
     return "{{var}} = '$args->[0]'";
 }
 
+sub command_unbless {
+    require Data::Structure::Util;
+
+    my ($self, $args) = @_;
+    return "{{var}} = Data::Structure::Util::unbless({{var}})";
+}
+
 # test
 sub command_die {
     my ($self, $args) = @_;
@@ -168,6 +175,11 @@ will become 1000.
 =item * ['deref_scalar']
 
 This will replace a scalar reference like \1 with 1.
+
+=item * ['unbless']
+
+This will perform unblessing using L<Data::Structure::Util>. Should be done only
+for objects (C<-obj>).
 
 =back
 
