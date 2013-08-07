@@ -13,7 +13,7 @@ my $data;
 my $cdata;
 
 $cdata = $c->clone_and_clean({code=>sub{} , date=>DateTime->from_epoch(epoch=>1001), scalar=>\1, obj=>bless({},"Foo")});
-is_deeply($cdata, {code=>"CODE", date=>1001, scalar=>1 , obj=>"Foo"}, "cleaning up");
+is_deeply($cdata, {code=>"CODE", date=>1001, scalar=>1 , obj=>{}}, "cleaning up");
 
 $data  = [1, [2]]; push @$data, $data;
 $cdata = $c->clone_and_clean($data);
