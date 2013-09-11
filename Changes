@@ -1,5 +1,13 @@
 Revision history for Data-Clean-JSON
 
+0.07     2013-09-11 (SHARYANTO)
+
+         - No functional changes. Replace Data::Structure::Util's unbless() with
+           Acme::Damn's damn() because the former currently fails to build on
+           Windows (I'm currently trying to make Perinci::CmdLine work on
+           Windows).
+
+
 0.06     2013-08-07 (SHARYANTO)
 
          [INCOMPATIBLE CHANGES]
