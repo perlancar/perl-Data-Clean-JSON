@@ -1,5 +1,11 @@
 Revision history for Data-Clean-JSON
 
+0.10     2013-10-14 (SHARYANTO)
+
+         - Split functionality of JSON::{PP,XS}::Boolean handling to
+           Data::Clean::FromJSON.
+
+
 0.09     2013-10-14 (SHARYANTO)
 
          - No functional changes. Revert back some code.
