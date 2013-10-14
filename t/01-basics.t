@@ -7,7 +7,7 @@ use warnings;
 use Data::Clean::JSON;
 use DateTime;
 use JSON;
-use Test::More 0.96;
+use Test::More 0.98;
 
 my $c = Data::Clean::JSON->new;
 my $data;
