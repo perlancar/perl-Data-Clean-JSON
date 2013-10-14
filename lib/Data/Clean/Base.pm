@@ -30,7 +30,7 @@ sub command_call_func {
 
 sub command_one_or_zero {
     my ($self, $args) = @_;
-    return "{{var}} = {{val}} ? 1:0";
+    return "{{var}} = {{var}} ? 1:0";
 }
 
 sub command_deref_scalar {
@@ -75,7 +75,7 @@ sub _generate_cleanser_code {
     my $n = 0;
     my $add_if = sub {
         my ($cond0, $act0) = @_;
-        for ([\@ifs_ary, '$e'], [\@ifs_hash, '$h->{$k}'], [\@ifs_main, '$_']) {
+        for ([\@ifs_ary, '$a->[$i]'], [\@ifs_hash, '$h->{$k}'], [\@ifs_main, '$_']) {
             my $act  = $act0 ; $act  =~ s/\Q{{var}}\E/$_->[1]/g;
             my $cond = $cond0; $cond =~ s/\Q{{var}}\E/$_->[1]/g;
             push @{ $_->[0] }, "    ".($n ? "els":"")."if ($cond) { $act }\n";
@@ -92,7 +92,7 @@ sub _generate_cleanser_code {
         $add_if->('$ref && $refs{ {{var}} }++', '{{var}} = "CIRCULAR"; last');
     }
 
-    for my $on (grep {/\A\w+\z/} sort keys %$opts) {
+    for my $on (grep {/\A\w+(::\w+)*\z/} sort keys %$opts) {
         my $o = $opts->{$on};
         next unless $o;
         my $meth = "command_$o->[0]";
@@ -118,7 +118,7 @@ sub _generate_cleanser_code {
     push @code, 'state %refs;'."\n" if $circ;
     push @code, 'state $process_array;'."\n";
     push @code, 'state $process_hash;'."\n";
-    push @code, 'if (!$process_array) { $process_array = sub { my $a = shift; for my $e (@$a) { my $ref=ref($e);'."\n".join("", @ifs_ary).'} } }'."\n";
+    push @code, 'if (!$process_array) { $process_array = sub { my $a = shift; for my $i (0..$#$a) { my $ref=ref($a->[$i]);'."\n".join("", @ifs_ary).'} } }'."\n";
     push @code, 'if (!$process_hash) { $process_hash = sub { my $h = shift; for my $k (keys %$h) { my $ref=ref($h->{$k});'."\n".join("", @ifs_hash).'} } }'."\n";
     push @code, '%refs = ();'."\n" if $circ;
     push @code, 'for ($data) { my $ref=ref($_);'."\n".join("", @ifs_main).'}'."\n";

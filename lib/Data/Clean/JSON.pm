@@ -10,6 +10,8 @@ use parent qw(Data::Clean::Base);
 
 sub new {
     my ($class, %opts) = @_;
+    $opts{"JSON::XS::Boolean"} //= ['one_or_zero'];
+    $opts{"JSON::PP::Boolean"} //= ['one_or_zero'];
     $opts{DateTime}  //= [call_method => 'epoch'];
     $opts{Regexp}    //= ['stringify'];
     $opts{SCALAR}    //= ['deref_scalar'];
@@ -73,6 +75,8 @@ Create a new instance. For list of known options, see L<Data::Clean::Base>.
 Data::Clean::JSON sets some defaults.
 
     DateTime  => [call_method => 'epoch']
+    "JSON::PP::Boolean" => ['one_or_zero']
+    "JSON::XS::Boolean" => ['one_or_zero']
     Regexp    => ['stringify']
     SCALAR    => ['deref_scalar']
     -ref      => ['replace_with_ref']
