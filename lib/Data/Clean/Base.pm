@@ -23,6 +23,16 @@ sub command_call_method {
     return "{{var}} = {{var}}->$args->[0]";
 }
 
+sub command_call_func {
+    my ($self, $args) = @_;
+    return "{{var}} = $args->[0]({{var}})";
+}
+
+sub command_one_or_zero {
+    my ($self, $args) = @_;
+    return "{{var}} = {{val}} ? 1:0";
+}
+
 sub command_deref_scalar {
     my ($self, $args) = @_;
     return '{{var}} = ${ {{var}} }';
@@ -116,7 +126,12 @@ sub _generate_cleanser_code {
     push @code, '}'."\n";
 
     my $code = join("", @code).";";
-    $log->tracef("Cleanser code:\n%s", $code) if $ENV{LOG_CLEANSER_CODE};
+    if ($ENV{LOG_CLEANSER_CODE} && $log->is_trace) {
+        require SHARYANTO::String::Util;
+        $log->tracef("Cleanser code:\n%s",
+                     $ENV{LINENUM} // 1 ?
+                         SHARYANTO::String::Util::linenum($code) : $code);
+    }
     eval "\$self->{code} = $code";
     die "Can't generate code: $@" if $@;
 }
@@ -174,6 +189,15 @@ This will call a method and use its return as the replacement. For example:
 DateTime->from_epoch(epoch=>1000) when processed with [call_method => 'epoch']
 will become 1000.
 
+=item * ['call_func', STR]
+
+This will call a function named STR with value as argument and use its return as
+the replacement.
+
+=item * ['one_or_zero', STR]
+
+This will perform C<< $val ? 1:0 >>.
+
 =item * ['deref_scalar']
 
 This will replace a scalar reference like \1 with 1.
@@ -220,6 +244,10 @@ Clean $data. Clone $data first.
 
 Can be enabled if you want to see the generated cleanser code. It is logged at
 level C<trace>.
+
+=item * LINENUM => BOOL (default: 1)
+
+When logging cleanser code, whether to give line numbers.
 
 =back
 
