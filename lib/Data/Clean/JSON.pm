@@ -54,10 +54,10 @@ The design goals are good performance, good defaults, and just enough
 flexibility. The original use-case is for returning JSON response in HTTP API
 service.
 
-This module is significantly faster than L<Data::Rmap> because with Rmap you
-repeatedly invoke anonymous subroutine for each data item. This module, on the
-other hand, generates a cleanser code using eval(), using native Perl for()
-loops.
+This module is significantly faster than modules like L<Data::Rmap> or
+L<Data::Visitor::Callback> because with something like Data::Rmap you repeatedly
+invoke callback for each data item. This module, on the other hand, generates a
+cleanser code using eval(), using native Perl for() loops.
 
 The generated cleanser code is logged using L<Log::Any> at trace level. You can
 see it, e.g. using L<Log::Any::App>:
@@ -134,5 +134,12 @@ The less number of checks you do, the faster the cleansing process will be.
 an object. If you are cleaning objects, instead of using clone_and_clean(), try
 using clean_in_place(). Or, clone your data first using something else like
 L<Storable>.
+
+
+=head1 SEE ALSO
+
+L<Data::Rmap>
+
+L<Data::Visitor::Callback>
 
 =cut
