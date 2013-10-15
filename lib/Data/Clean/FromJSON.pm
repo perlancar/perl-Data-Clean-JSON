@@ -51,4 +51,18 @@ Clean $data. Modify data in-place.
 
 Clean $data. Clone $data first.
 
+
+=head1 ENVIRONMENT
+
+LOG_CLEANSER_CODE
+
+
+=head1 FAQ
+
+=head2 Why am I getting 'Modification of a read-only value attempted at lib/Data/Clean/Base.pm line xxx'?
+
+[2013-10-15 ] This is also from Data::Clone::clone() when it encounters
+JSON::{PP,XS}::Boolean objects. You can use clean_in_place() instead of
+clone_and_clean(), or clone your data using other cloner like L<Storable>.
+
 =cut

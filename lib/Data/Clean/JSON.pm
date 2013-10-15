@@ -154,12 +154,6 @@ an object. If you are cleaning objects, instead of using clone_and_clean(), try
 using clean_in_place(). Or, clone your data first using something else like
 L<Storable>.
 
-=head2 Why am I getting 'Modification of a read-only value attempted at lib/Data/Clean/Base.pm line xxx'?
-
-[2013-10-15 ] This is also from Data::Clone::clone() when it encounters
-JSON::{PP,XS}::Boolean objects. You can use clean_in_place() instead of
-clone_and_clean(), or clone your data using other cloner like L<Storable>.
-
 
 =head1 SEE ALSO
 
