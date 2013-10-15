@@ -59,10 +59,12 @@ L<Data::Visitor::Callback> because with something like Data::Rmap you repeatedly
 invoke callback for each data item. This module, on the other hand, generates a
 cleanser code using eval(), using native Perl for() loops.
 
-The generated cleanser code is logged using L<Log::Any> at trace level. You can
-see it, e.g. using L<Log::Any::App>:
+If C<LOG_CLEANSER_CODE> environment is set to true, the generated cleanser code
+will be logged using L<Log::Any> at trace level. You can see it, e.g. using
+L<Log::Any::App>:
 
- % TRACE=1 perl -MLog::Any::App -MData::Clean::JSON -e'$c=Data::Clean::JSON->new; ...'
+ % LOG_CLEANSER_CODE=1 TRACE=1 perl -MLog::Any::App -MData::Clean::JSON \
+   -e'$c=Data::Clean::JSON->new; ...'
 
 
 =head1 METHODS
@@ -86,6 +88,11 @@ Clean $data. Modify data in-place.
 =head2 $obj->clone_and_clean($data) => $cleaned
 
 Clean $data. Clone $data first.
+
+
+=head1 ENVIRONMENT
+
+LOG_CLEANSER_CODE
 
 
 =head1 FAQ
