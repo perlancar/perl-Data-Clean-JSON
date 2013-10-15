@@ -1,5 +1,10 @@
 Revision history for Data-Clean-JSON
 
+0.11     2013-10-15 (SHARYANTO)
+
+         - Introduce get_cleanser() to get singleton instance.
+
+
 0.10     2013-10-14 (SHARYANTO)
 
          - Split functionality of JSON::{PP,XS}::Boolean handling to
