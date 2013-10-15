@@ -19,13 +19,19 @@ sub new {
     $class->SUPER::new(%opts);
 }
 
+sub get_cleanser {
+    my $class = shift;
+    state $singleton = $class->new;
+    $singleton;
+}
+
 1;
 # ABSTRACT: Clean data so it is safe to output to JSON
 
 =head1 SYNOPSIS
 
  use Data::Clean::JSON;
- my $cleanser = Data::Clean::JSON->new;    # there are some options
+ my $cleanser = Data::Clean::JSON->get_cleanser;
  my $data     = { code=>sub {}, re=>qr/abc/i };
 
  my $cleaned;
@@ -69,7 +75,12 @@ L<Log::Any::App>:
 
 =head1 METHODS
 
-=head2 new(%opts) => $obj
+=head2 CLASS->get_cleanser => $obj
+
+Return a singleton instance, with default options. Use C<new()> if you want to
+customize options.
+
+=head2 CLASS->new(%opts) => $obj
 
 Create a new instance. For list of known options, see L<Data::Clean::Base>.
 Data::Clean::JSON sets some defaults.
@@ -103,9 +114,10 @@ So that the data can be used for other stuffs, like outputting to YAML, etc.
 
 =head2 Why is it slow?
 
-First make sure that you do not construct the Data::Clean::JSON object
-repeatedly, as the constructor generates the cleanser code first using eval(). A
-short benchmark (run on my slow Atom netbook):
+If you use C<new()> instead of C<get_cleanser()>, make sure that you do not
+construct the Data::Clean::JSON object repeatedly, as the constructor generates
+the cleanser code first using eval(). A short benchmark (run on my slow Atom
+netbook):
 
  % bench -MData::Clean::JSON -b'$c=Data::Clean::JSON->new' \
      'Data::Clean::JSON->new->clone_and_clean([1..100])' \
