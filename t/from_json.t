@@ -9,7 +9,7 @@ use DateTime;
 use JSON;
 use Test::More 0.98;
 
-my $c = Data::Clean::FromJSON->new;
+my $c = Data::Clean::FromJSON->get_cleanser;
 my $data;
 my $cdata;
 
