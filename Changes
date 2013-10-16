@@ -16,7 +16,7 @@ Revision history for Data-Clean-JSON
          - No functional changes. Revert back some code.
 
 
-0.08     2013-10-14 (SHARYANTO)
+0.08     2013-10-14 (SHARYANTO) - Get well soon, dad!
 
          - Handle JSON::{XS,PP}::Boolean objects (convert to 1/0).
 
