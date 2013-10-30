@@ -1,5 +1,21 @@
 Revision history for Data-Clean-JSON
 
+0.12     2013-10-31 (SHARYANTO)
+
+         - No functional changes.
+
+         - Add some more tests.
+
+         [BUG FIXES]
+
+         - Properly quote string in 'replace_with_str' command.
+
+         [SECURITY]
+
+         - Check syntax of function and method name in 'call_func' and
+           'call_method'.
+
+
 0.11     2013-10-15 (SHARYANTO)
 
          - Introduce get_cleanser() to get singleton instance.
