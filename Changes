@@ -1,5 +1,11 @@
 Revision history for Data-Clean-JSON
 
+0.13     2013-10-31 (SHARYANTO)
+
+         - Allow opt '' to process non-references (e.g. numbers, strings, other
+           simple scalars).
+
+
 0.12     2013-10-31 (SHARYANTO)
 
          - No functional changes.
