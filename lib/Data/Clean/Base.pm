@@ -11,7 +11,6 @@ use Scalar::Util qw(blessed);
 
 sub new {
     my ($class, %opts) = @_;
-    $opts{-ref} //= ['stringify'];
     my $self = bless {opts=>\%opts}, $class;
     $log->tracef("Cleanser options: %s", \%opts);
     $self->_generate_cleanser_code;
