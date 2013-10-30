@@ -42,6 +42,14 @@ subtest "command: replace_with_str" => sub {
     is_deeply($cdata, {a=>"JINNY'S TAIL"});
 };
 
+subtest "selector: ''" => sub {
+    my $c = Data::Clean::Base->new(
+        '' => ['replace_with_str', "X"],
+    );
+    my $cdata = $c->clean_in_place({a=>[], b=>1, c=>"x", d=>undef});
+    is_deeply($cdata, {a=>[], b=>"X", c=>"X", d=>"X"});
+};
+
 # command: call_method is tested via json
 # command: one_or_zero is tested via json
 # command: deref_scalar is tested via json
@@ -51,7 +59,6 @@ subtest "command: replace_with_str" => sub {
 # command: unbless is tested via json
 # selector: -circular is tested via json
 # selector: -obj is tested via json
-# XXX selector: -ref
 
 DONE_TESTING:
 done_testing();
