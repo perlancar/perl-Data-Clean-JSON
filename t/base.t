@@ -19,10 +19,17 @@ subtest "command: call_func" => sub {
 };
 
 subtest "security: check call_func argument" => sub {
-    require DateTime;
     dies_ok {
         Data::Clean::Base->new(
-            -obj => ['call_func', 'system "ls"'],
+            -obj => ['call_func', 'pos(); system "ls"'],
+        );
+    };
+};
+
+subtest "security: check call_method argument" => sub {
+    dies_ok {
+        Data::Clean::Base->new(
+            -obj => ['call_method', 'isa("a"); system "ls"'],
         );
     };
 };

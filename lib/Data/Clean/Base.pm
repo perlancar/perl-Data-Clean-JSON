@@ -17,6 +17,13 @@ sub new {
     $self;
 }
 
+sub command_call_method {
+    my ($self, $args) = @_;
+    my $mn = $args->[0];
+    die "Invalid method name syntax" unless $mn =~ /\A\w+\z/;
+    return "{{var}} = {{var}}->$mn";
+}
+
 sub command_call_func {
     my ($self, $args) = @_;
     my $fn = $args->[0];
