@@ -17,14 +17,11 @@ sub new {
     $self;
 }
 
-sub command_call_method {
-    my ($self, $args) = @_;
-    return "{{var}} = {{var}}->$args->[0]";
-}
-
 sub command_call_func {
     my ($self, $args) = @_;
-    return "{{var}} = $args->[0]({{var}})";
+    my $fn = $args->[0];
+    die "Invalid func name syntax" unless $fn =~ /\A\w+(::\w+)*\z/;
+    return "{{var}} = $fn({{var}})";
 }
 
 sub command_one_or_zero {
@@ -48,8 +45,10 @@ sub command_replace_with_ref {
 }
 
 sub command_replace_with_str {
+    require SHARYANTO::String::Util;
+
     my ($self, $args) = @_;
-    return "{{var}} = '$args->[0]'";
+    return "{{var}} = ".SHARYANTO::String::Util::qqquote($args->[0]);
 }
 
 sub command_unbless {
@@ -205,6 +204,14 @@ This will replace a scalar reference like \1 with 1.
 
 This will perform unblessing using L<Acme::Damn>. Should be done only for
 objects (C<-obj>).
+
+=item * ['code', STR]
+
+This will replace with STR treated as Perl code.
+
+Example:
+
+ obj => ''
 
 =back
 
