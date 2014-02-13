@@ -31,6 +31,12 @@ sub command_call_func {
     return "{{var}} = $fn({{var}})";
 }
 
+# old name, deprecated, will be removed someday
+sub command_detect_circular {
+    my ($self, $args) = @_;
+    return '{{var}} = "CIRCULAR"';
+}
+
 sub command_one_or_zero {
     my ($self, $args) = @_;
     return "{{var}} = {{var}} ? 1:0";
@@ -94,7 +100,11 @@ sub _generate_cleanser_code {
 
     my $circ = $opts->{-circular};
     if ($circ) {
-        $add_if->('$ref && $refs{ {{var}} }++', '{{var}} = "CIRCULAR"; last');
+        my $meth = "command_$circ->[0]";
+        die "Can't handle command $circ->[0] for option '-circular'" unless $self->can($meth);
+        my @args = @$circ; shift @args;
+        my $act = $self->$meth(\@args);
+        $add_if->('$ref && $refs{ {{var}} }++', "$act; last");
     }
 
     for my $on (grep {/\A\w*(::\w+)*\z/} sort keys %$opts) {
@@ -171,8 +181,14 @@ reference types or class names, or C<-obj> (to refer to objects, a.k.a. blessed
 references), C<-circular> (to refer to circular references), C<-ref> (to refer
 to references, used to process references not handled by other options). Option
 values are arrayrefs, the first element of the array is command name, to specify
-what to do with the reference/class. The rest are command arguments. Available
-commands:
+what to do with the reference/class. The rest are command arguments.
+
+Note that arrayrefs and hashrefs are always walked into, so it's not trapped by
+C<-ref>.
+
+Default for C<%opts>: C<< -ref => 'stringify' >>.
+
+Available commands:
 
 =over 4
 
@@ -216,29 +232,7 @@ objects (C<-obj>).
 
 This will replace with STR treated as Perl code.
 
-Example:
-
- obj => ''
-
 =back
-
-Special commands for C<-circular>:
-
-=over 4
-
-=item * ['detect_circular']
-
-Keep a count for each reference. When a circular reference is found, replace it
-with <"CIRCULAR">.
-
-=back
-
-Default options:
-
- -ref => 'stringify'
-
-Note that arrayrefs and hashrefs are always walked into, so it's not trapped by
-C<-ref>.
 
 =head2 $obj->clean_in_place($data) => $cleaned
 
