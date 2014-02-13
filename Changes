@@ -1,11 +1,26 @@
 Revision history for Data-Clean-JSON
 
+0.15     2014-02-13 (SHARYANTO)
+
+         [INCOMPATIBLE CHANGES]
+
+         - Default command for circular is changed from
+           [replace_with_ref=>'CIRCULAR'] to ['clone']. I believe this is more
+           useful for common cases, e.g. when $ref is [1] then {a=>$ref,
+           b=>$ref} will become {a=>[1], b=>[1]} instead of {a=>[1],
+           b=>'CIRCULAR'}.
+
+
 0.14     2014-02-13 (SHARYANTO)
+
+         [ENHANCEMENTS]
 
          - Add command: clone (for -circular).
 
 
 0.13     2013-10-31 (SHARYANTO)
+
+         [ENHANCEMENTS]
 
          - Allow opt '' to process non-references (e.g. numbers, strings, other
            simple scalars).
