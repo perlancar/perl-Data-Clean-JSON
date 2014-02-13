@@ -25,11 +25,14 @@ is_deeply($cdata, {
     obj    => {},
 }, "cleaning up");
 
-$data  = [1, [2]]; push @$data, $data;
-$cdata = $c->clone_and_clean($data);
-#use Data::Dump; dd $data; dd $cdata;
-is_deeply($cdata, [1, [2], "CIRCULAR"], "circular")
-    or diag explain $cdata;
+{
+    my $ref = [];
+    $data  = {a=>$ref, b=>$ref};
+    $cdata = $c->clone_and_clean($data);
+    #use Data::Dump; dd $data; dd $cdata;
+    is_deeply($cdata, {a=>[], b=>[]}, "circular")
+        or diag explain $cdata;
+}
 
 # XXX test: re
 

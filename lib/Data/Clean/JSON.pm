@@ -14,7 +14,7 @@ sub new {
     $opts{Regexp}    //= ['stringify'];
     $opts{SCALAR}    //= ['deref_scalar'];
     $opts{-ref}      //= ['replace_with_ref'];
-    $opts{-circular} //= ['replace_with_str', 'CIRCULAR'];
+    $opts{-circular} //= ['clone'];
     $opts{-obj}      //= ['unbless'];
     $class->SUPER::new(%opts);
 }
@@ -89,7 +89,7 @@ Data::Clean::JSON sets some defaults.
     Regexp    => ['stringify']
     SCALAR    => ['deref_scalar']
     -ref      => ['replace_with_ref']
-    -circular => ['replace_with_str', 'CIRCULAR']
+    -circular => ['clone']
     -obj      => ['unbless']
 
 =head2 $obj->clean_in_place($data) => $cleaned
