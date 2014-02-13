@@ -42,6 +42,20 @@ subtest "command: replace_with_str" => sub {
     is_deeply($cdata, {a=>"JINNY'S TAIL"});
 };
 
+subtest "selector: -circular, command: clone" => sub {
+    my ($c, $data, $cdata);
+
+    $data = [1]; push @$data, $data;
+
+    $c = Data::Clean::Base->new(-circular => ['clone', 1]);
+    $cdata = $c->clone_and_clean($data);
+    is_deeply($cdata, [1, [1, 'CIRCULAR']], 'limit 1');
+
+    $c = Data::Clean::Base->new(-circular => ['clone', 2]);
+    $cdata = $c->clone_and_clean($data);
+    is_deeply($cdata, [1, [1, [1, 'CIRCULAR']]], 'limit 2');
+};
+
 subtest "selector: ''" => sub {
     my $c = Data::Clean::Base->new(
         '' => ['replace_with_str', "X"],
@@ -57,7 +71,6 @@ subtest "selector: ''" => sub {
 # command: replace_with_ref is tested via json
 # command: replace_with_ref is tested via json
 # command: unbless is tested via json
-# selector: -circular is tested via json
 # selector: -obj is tested via json
 
 DONE_TESTING:

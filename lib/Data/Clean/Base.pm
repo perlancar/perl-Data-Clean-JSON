@@ -71,6 +71,14 @@ sub command_unbless {
     return "{{var}} = Acme::Damn::damn({{var}})";
 }
 
+sub command_clone {
+    require Data::Clone;
+
+    my ($self, $args) = @_;
+    my $limit = $args->[0] // 50;
+    return "if (++\$ctr_circ <= $limit) { {{var}} = Data::Clone::clone({{var}}); redo } else { {{var}} = 'CIRCULAR' }";
+}
+
 # test
 sub command_die {
     my ($self, $args) = @_;
@@ -86,9 +94,12 @@ sub _generate_cleanser_code {
     my $n = 0;
     my $add_if = sub {
         my ($cond0, $act0) = @_;
-        for ([\@ifs_ary, '$e'], [\@ifs_hash, '$h->{$k}'], [\@ifs_main, '$_']) {
+        for ([\@ifs_ary, '$e', 'ary'],
+             [\@ifs_hash, '$h->{$k}', 'hash'],
+             [\@ifs_main, '$_', 'main']) {
             my $act  = $act0 ; $act  =~ s/\Q{{var}}\E/$_->[1]/g;
             my $cond = $cond0; $cond =~ s/\Q{{var}}\E/$_->[1]/g;
+            #unless (@{ $_->[0] }) { push @{ $_->[0] }, '    say "D:'.$_->[2].' val=", '.$_->[1].', ", ref=$ref"; # DEBUG'."\n" }
             push @{ $_->[0] }, "    ".($n ? "els":"")."if ($cond) { $act }\n";
         }
         $n++;
@@ -104,7 +115,7 @@ sub _generate_cleanser_code {
         die "Can't handle command $circ->[0] for option '-circular'" unless $self->can($meth);
         my @args = @$circ; shift @args;
         my $act = $self->$meth(\@args);
-        $add_if->('$ref && $refs{ {{var}} }++', "$act; last");
+        $add_if->('$ref && $refs{ {{var}} }++', $act);
     }
 
     for my $on (grep {/\A\w*(::\w+)*\z/} sort keys %$opts) {
@@ -131,11 +142,12 @@ sub _generate_cleanser_code {
     push @code, 'sub {'."\n";
     push @code, 'my $data = shift;'."\n";
     push @code, 'state %refs;'."\n" if $circ;
+    push @code, 'state $ctr_circ;'."\n" if $circ;
     push @code, 'state $process_array;'."\n";
     push @code, 'state $process_hash;'."\n";
     push @code, 'if (!$process_array) { $process_array = sub { my $a = shift; for my $e (@$a) { my $ref=ref($e);'."\n".join("", @ifs_ary).'} } }'."\n";
     push @code, 'if (!$process_hash) { $process_hash = sub { my $h = shift; for my $k (keys %$h) { my $ref=ref($h->{$k});'."\n".join("", @ifs_hash).'} } }'."\n";
-    push @code, '%refs = ();'."\n" if $circ;
+    push @code, '%refs = (); $ctr_circ=0;'."\n" if $circ;
     push @code, 'for ($data) { my $ref=ref($_);'."\n".join("", @ifs_main).'}'."\n";
     push @code, '$data'."\n";
     push @code, '}'."\n";
@@ -231,6 +243,45 @@ objects (C<-obj>).
 =item * ['code', STR]
 
 This will replace with STR treated as Perl code.
+
+=item * ['clone', INT]
+
+This command is useful if you have circular references and want to expand/copy
+them. For example:
+
+ my $def_opts = { opt1 => 'default', opt2 => 0 };
+ my $users    = { alice => $def_opts, bob => $def_opts, charlie => $def_opts };
+
+C<$users> contains three references to the same data structure. With the default
+behaviour of C<< -circular => [replace_with_str => 'CIRCULAR'] >> the cleaned
+data structure will be:
+
+ { alice   => { opt1 => 'default', opt2 => 0 },
+   bob     => 'CIRCULAR',
+   charlie => 'CIRCULAR' }
+
+But with C<< -circular => ['clone'] >> option, the data structure will be
+cleaned to become (the C<$def_opts> is cloned):
+
+ { alice   => { opt1 => 'default', opt2 => 0 },
+   bob     => { opt1 => 'default', opt2 => 0 },
+   charlie => { opt1 => 'default', opt2 => 0 }, }
+
+The command argument specifies the number of references to clone as a limit (the
+default is 50), since a cyclical structure can lead to infinite cloning. Above
+this limit, the circular references will be replaced with a string
+C<"CIRCULAR">. For example:
+
+ my $a = [1]; push @$a, $a;
+
+With C<< -circular => ['clone', 2] >> the data will be cleaned as:
+
+ [1, [1, [1, "CIRCULAR"]]]
+
+With C<< -circular => ['clone', 3] >> the data will be cleaned as:
+
+ [1, [1, [1, [1, "CIRCULAR"]]]]
+
 
 =back
 
