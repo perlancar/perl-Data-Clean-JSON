@@ -72,11 +72,18 @@ sub command_unbless {
 }
 
 sub command_clone {
-    require Data::Clone;
+    my $clone_func;
+    eval { require Data::Clone };
+    if ($@) {
+        require SHARYANTO::MaybeXS;
+        $clone_func = "SHARYANTO::MaybeXS::clone";
+    } else {
+        $clone_func = "Data::Clone::clone";
+    }
 
     my ($self, $args) = @_;
     my $limit = $args->[0] // 50;
-    return "if (++\$ctr_circ <= $limit) { {{var}} = Data::Clone::clone({{var}}); redo } else { {{var}} = 'CIRCULAR' }";
+    return "if (++\$ctr_circ <= $limit) { {{var}} = $clone_func({{var}}); redo } else { {{var}} = 'CIRCULAR' }";
 }
 
 # test
