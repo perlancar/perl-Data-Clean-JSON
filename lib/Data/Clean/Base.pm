@@ -177,10 +177,10 @@ sub clean_in_place {
 }
 
 sub clone_and_clean {
-    require Data::Clone;
+    require SHARYANTO::MaybeXS;
 
     my ($self, $data) = @_;
-    my $clone = Data::Clone::clone($data);
+    my $clone = SHARYANTO::MaybeXS::clone($data);
     $self->clean_in_place($clone);
 }
 
