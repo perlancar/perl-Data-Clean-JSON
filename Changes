@@ -1,5 +1,12 @@
 Revision history for Data-Clean-JSON
 
+0.16     2014-04-10 (SHARYANTO)
+
+         - No functional changes.
+
+         - Replace Acme::Damn and Data::Clone with Function::Fallback::CoreOrPP.
+
+
 0.15     2014-02-13 (SHARYANTO)
 
          [INCOMPATIBLE CHANGES]
