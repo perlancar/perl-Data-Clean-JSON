@@ -66,10 +66,15 @@ sub command_replace_with_str {
 }
 
 sub command_unbless {
-    require Acme::Damn;
-
     my ($self, $args) = @_;
-    return "{{var}} = Acme::Damn::damn({{var}})";
+
+    my $func;
+    if (eval { require Acme::Damn; 1 }) {
+        $func = "Acme::Damn::damn";
+    } else {
+        $func = "Function::Fallback::CoreOrPP::_unbless_fallback";
+    }
+    return "{{var}} = $func({{var}})";
 }
 
 sub command_clone {
@@ -243,8 +248,8 @@ This will replace a scalar reference like \1 with 1.
 
 =item * ['unbless']
 
-This will perform unblessing using L<Acme::Damn>. Should be done only for
-objects (C<-obj>).
+This will perform unblessing using L<Function::Fallback::CoreOrPP::unbless()>.
+Should be done only for objects (C<-obj>).
 
 =item * ['code', STR]
 
