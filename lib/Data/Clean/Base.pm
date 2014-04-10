@@ -5,6 +5,7 @@ use strict;
 use warnings;
 use Log::Any '$log';
 
+use Function::Fallback::CoreOrPP qw(clone);
 use Scalar::Util qw(blessed);
 
 # VERSION
@@ -75,8 +76,8 @@ sub command_clone {
     my $clone_func;
     eval { require Data::Clone };
     if ($@) {
-        require SHARYANTO::MaybeXS;
-        $clone_func = "SHARYANTO::MaybeXS::clone";
+        require Clone::PP;
+        $clone_func = "Clone::PP::clone";
     } else {
         $clone_func = "Data::Clone::clone";
     }
@@ -177,10 +178,8 @@ sub clean_in_place {
 }
 
 sub clone_and_clean {
-    require SHARYANTO::MaybeXS;
-
     my ($self, $data) = @_;
-    my $clone = SHARYANTO::MaybeXS::clone($data);
+    my $clone = clone($data);
     $self->clean_in_place($clone);
 }
 
