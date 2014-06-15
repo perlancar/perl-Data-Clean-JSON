@@ -152,7 +152,7 @@ The less number of checks you do, the faster the cleansing process will be.
 [2013-08-07 ] This error message is from Data::Clone::clone() when it is cloning
 an object. If you are cleaning objects, instead of using clone_and_clean(), try
 using clean_in_place(). Or, clone your data first using something else like
-L<Storable>.
+L<Sereal>.
 
 
 =head1 SEE ALSO

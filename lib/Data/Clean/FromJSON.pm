@@ -74,6 +74,6 @@ LOG_CLEANSER_CODE
 
 [2013-10-15 ] This is also from Data::Clone::clone() when it encounters
 JSON::{PP,XS}::Boolean objects. You can use clean_in_place() instead of
-clone_and_clean(), or clone your data using other cloner like L<Storable>.
+clone_and_clean(), or clone your data using other cloner like L<Sereal>.
 
 =cut
