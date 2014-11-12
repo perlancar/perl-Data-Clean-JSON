@@ -1,5 +1,12 @@
 Revision history for Data-Clean-JSON
 
+0.18    2014-11-12 (PERLANCAR)
+
+	- No functional changes.
+
+	- Make Acme::Damn and Data::Clone optional prereqs [#98887].
+
+
 0.17    2014-11-07 (PERLANCAR)
 
 	- Remove unneeded dep.
