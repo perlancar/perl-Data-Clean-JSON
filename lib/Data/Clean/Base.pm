@@ -75,7 +75,7 @@ sub command_unbless {
     # Acme::Damn for the former case. this workaround will be unnecessary when
     # Data::Clone clones objects.
 
-    my $acme_damn_available = eval { require Acme::Damn; 1 };
+    my $acme_damn_available = eval { require Acme::Damn; 1 } ? 1:0;
     return "if (!\$Data::Clean::Base::_clone && $acme_damn_available) { {{var}} = Acme::Damn::damn({{var}}) } else { {{var}} = Function::Fallback::CoreOrPP::_unbless_fallback({{var}}) }";
 }
 
