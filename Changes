@@ -1,5 +1,10 @@
 Revision history for Data-Clean-JSON
 
+0.19    2014-11-13 (PERLANCAR)
+
+	- Avoid perl undef warning & syntax error in generated code [CT].
+
+
 0.18    2014-11-12 (PERLANCAR)
 
 	- No functional changes.
