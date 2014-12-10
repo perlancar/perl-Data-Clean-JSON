@@ -60,10 +60,10 @@ sub command_replace_with_ref {
 }
 
 sub command_replace_with_str {
-    require SHARYANTO::String::Util;
+    require String::PerlQuote;
 
     my ($self, $args) = @_;
-    return "{{var}} = ".SHARYANTO::String::Util::qqquote($args->[0]);
+    return "{{var}} = ".String::PerlQuote::double_quote($args->[0]);
 }
 
 sub command_unbless {
@@ -169,10 +169,10 @@ sub _generate_cleanser_code {
 
     my $code = join("", @code).";";
     if ($ENV{LOG_CLEANSER_CODE} && $log->is_trace) {
-        require SHARYANTO::String::Util;
+        require String::LineNumber;
         $log->tracef("Cleanser code:\n%s",
                      $ENV{LINENUM} // 1 ?
-                         SHARYANTO::String::Util::linenum($code) : $code);
+                         String::LineNumber::linenum($code) : $code);
     }
     eval "\$self->{code} = $code";
     die "Can't generate code: $@" if $@;
