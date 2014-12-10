@@ -1,5 +1,13 @@
 Revision history for Data-Clean-JSON
 
+0.20    2014-12-10 (PERLANCAR)
+
+	- No functional changes.
+
+	- Use new name of renamed/split module SHARYANTO::String::Util ->
+	  String::LineNumber & String::PerlQuote.
+
+
 0.19    2014-11-13 (PERLANCAR)
 
 	- Avoid perl undef warning & syntax error in generated code [CT].
