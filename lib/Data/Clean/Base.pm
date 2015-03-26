@@ -33,12 +33,6 @@ sub command_call_func {
     return "{{var}} = $fn({{var}})";
 }
 
-# old name, deprecated, will be removed someday
-sub command_detect_circular {
-    my ($self, $args) = @_;
-    return '{{var}} = "CIRCULAR"';
-}
-
 sub command_one_or_zero {
     my ($self, $args) = @_;
     return "{{var}} = {{var}} ? 1:0";
