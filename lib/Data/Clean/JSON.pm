@@ -1,12 +1,13 @@
 package Data::Clean::JSON;
 
+# DATE
+# VERSION
+
 use 5.010001;
 use strict;
 use warnings;
 
 use parent qw(Data::Clean::Base);
-
-# VERSION
 
 sub new {
     my ($class, %opts) = @_;
@@ -69,7 +70,7 @@ If C<LOG_CLEANSER_CODE> environment is set to true, the generated cleanser code
 will be logged using L<Log::Any> at trace level. You can see it, e.g. using
 L<Log::Any::App>:
 
- % LOG_CLEANSER_CODE=1 TRACE=1 perl -MLog::Any::App -MData::Clean::JSON \
+ % LOG=1 LOG_CLEANSER_CODE=1 TRACE=1 perl -MLog::Any::App -MData::Clean::JSON \
    -e'$c=Data::Clean::JSON->new; ...'
 
 

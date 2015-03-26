@@ -1,12 +1,13 @@
 package Data::Clean::FromJSON;
 
+# DATE
+# VERSION
+
 use 5.010001;
 use strict;
 use warnings;
 
 use parent qw(Data::Clean::Base);
-
-# VERSION
 
 sub new {
     my ($class, %opts) = @_;
