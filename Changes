@@ -1,5 +1,17 @@
 Revision history for Data-Clean-JSON
 
+0.23    2015-03-26 (PERLANCAR)
+
+        - Don't count object converted into non-ref into clone limit. This
+          solves the problem of only a few DateTime/Time::Moment/other objects
+          being converted into timestamps (if they happen to be referenced twice
+          or more in the data structure, triggering the circular check and
+          quickly hitting the clone limit), because even after each object is
+          converted into a non-ref value, the old ref is still counted. The new
+          release now compares the ref() of the new converted value when doing
+          circular check.
+
+
 0.22    2015-03-26 (PERLANCAR)
 
 	- Convert Time::Moment objects like DateTime objects (convert them
