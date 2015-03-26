@@ -1,5 +1,12 @@
 Revision history for Data-Clean-JSON
 
+0.24    2015-03-26 (PERLANCAR)
+
+	- Change the default clone limit from 50 to 1, as this is now the
+	  more sensible default now that the previous release has fixed
+	  clone limit counting for converted objects.
+
+
 0.23    2015-03-26 (PERLANCAR)
 
         - Don't count object converted into non-ref into clone limit. This
