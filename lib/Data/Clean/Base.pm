@@ -91,7 +91,7 @@ sub command_clone {
     }
 
     my ($self, $args) = @_;
-    my $limit = $args->[0] // 50;
+    my $limit = $args->[0] // 1;
     return join(
         "",
         "if (++\$ctr_circ <= $limit) { ",
