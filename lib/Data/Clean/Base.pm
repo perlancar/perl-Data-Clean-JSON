@@ -23,24 +23,24 @@ sub command_call_method {
     my ($self, $args) = @_;
     my $mn = $args->[0];
     die "Invalid method name syntax" unless $mn =~ /\A\w+\z/;
-    return "{{var}} = {{var}}->$mn";
+    return "{{var}} = {{var}}->$mn; \$ref = ref({{var}})";
 }
 
 sub command_call_func {
     my ($self, $args) = @_;
     my $fn = $args->[0];
     die "Invalid func name syntax" unless $fn =~ /\A\w+(::\w+)*\z/;
-    return "{{var}} = $fn({{var}})";
+    return "{{var}} = $fn({{var}}); \$ref = ref({{var}})";
 }
 
 sub command_one_or_zero {
     my ($self, $args) = @_;
-    return "{{var}} = {{var}} ? 1:0";
+    return "{{var}} = {{var}} ? 1:0; \$ref = ''";
 }
 
 sub command_deref_scalar {
     my ($self, $args) = @_;
-    return '{{var}} = ${ {{var}} }';
+    return '{{var}} = ${ {{var}} }; $ref = ref({{var}})';
 }
 
 sub command_stringify {
@@ -50,14 +50,14 @@ sub command_stringify {
 
 sub command_replace_with_ref {
     my ($self, $args) = @_;
-    return '{{var}} = $ref';
+    return '{{var}} = $ref; $ref = ""';
 }
 
 sub command_replace_with_str {
     require String::PerlQuote;
 
     my ($self, $args) = @_;
-    return "{{var}} = ".String::PerlQuote::double_quote($args->[0]);
+    return "{{var}} = ".String::PerlQuote::double_quote($args->[0]).'; $ref=""';
 }
 
 sub command_unbless {
@@ -70,7 +70,14 @@ sub command_unbless {
     # Data::Clone clones objects.
 
     my $acme_damn_available = eval { require Acme::Damn; 1 } ? 1:0;
-    return "if (!\$Data::Clean::Base::_clone && $acme_damn_available) { {{var}} = Acme::Damn::damn({{var}}) } else { {{var}} = Function::Fallback::CoreOrPP::_unbless_fallback({{var}}) }";
+    return join(
+        "",
+        "if (!\$Data::Clean::Base::_clone && $acme_damn_available) { ",
+        "{{var}} = Acme::Damn::damn({{var}}) ",
+        "} else { ",
+        "{{var}} = Function::Fallback::CoreOrPP::_unbless_fallback({{var}}) } ",
+        "\$ref = ref({{var}})",
+    );
 }
 
 sub command_clone {
@@ -85,7 +92,14 @@ sub command_clone {
 
     my ($self, $args) = @_;
     my $limit = $args->[0] // 50;
-    return "if (++\$ctr_circ <= $limit) { {{var}} = $clone_func({{var}}); redo } else { {{var}} = 'CIRCULAR' }";
+    return join(
+        "",
+        "if (++\$ctr_circ <= $limit) { ",
+        "{{var}} = $clone_func({{var}}); redo ",
+        "} else { ",
+        "{{var}} = 'CIRCULAR' } ",
+        "\$ref = ref({{var}})",
+    );
 }
 
 # test
@@ -98,35 +112,48 @@ sub _generate_cleanser_code {
     my $self = shift;
     my $opts = $self->{opts};
 
-    my (@code, @ifs_ary, @ifs_hash, @ifs_main);
+    my (@code, @stmts_ary, @stmts_hash, @stmts_main);
 
     my $n = 0;
-    my $add_if = sub {
-        my ($cond0, $act0) = @_;
-        for ([\@ifs_ary, '$e', 'ary'],
-             [\@ifs_hash, '$h->{$k}', 'hash'],
-             [\@ifs_main, '$_', 'main']) {
-            my $act  = $act0 ; $act  =~ s/\Q{{var}}\E/$_->[1]/g;
-            my $cond = $cond0; $cond =~ s/\Q{{var}}\E/$_->[1]/g;
-            #unless (@{ $_->[0] }) { push @{ $_->[0] }, '    say "D:'.$_->[2].' val=", '.$_->[1].', ", ref=$ref"; # DEBUG'."\n" }
-            push @{ $_->[0] }, "    ".($n ? "els":"")."if ($cond) { $act }\n";
+    my $add_stmt = sub {
+        my $which = shift;
+        if ($which eq 'if' || $which eq 'new_if') {
+            my ($cond0, $act0) = @_;
+            for ([\@stmts_ary, '$e', 'ary'],
+                 [\@stmts_hash, '$h->{$k}', 'hash'],
+                 [\@stmts_main, '$_', 'main']) {
+                my $act  = $act0 ; $act  =~ s/\Q{{var}}\E/$_->[1]/g;
+                my $cond = $cond0; $cond =~ s/\Q{{var}}\E/$_->[1]/g;
+                #unless (@{ $_->[0] }) { push @{ $_->[0] }, '    say "D:'.$_->[2].' val=", '.$_->[1].', ", ref=$ref"; # DEBUG'."\n" }
+                push @{ $_->[0] }, "    ".($n && $which ne 'new_if' ? "els":"")."if ($cond) { $act }\n";
+            }
+            $n++;
+        } else {
+            my ($stmt0) = @_;
+            for ([\@stmts_ary, '$e', 'ary'],
+                 [\@stmts_hash, '$h->{$k}', 'hash'],
+                 [\@stmts_main, '$_', 'main']) {
+                my $stmt = $stmt0; $stmt =~ s/\Q{{var}}\E/$_->[1]/g;
+                push @{ $_->[0] }, "    $stmt;\n";
+            }
         }
-        $n++;
+    };
+    my $add_if = sub {
+        $add_stmt->('if', @_);
+    };
+    my $add_new_if = sub {
+        $add_stmt->('new_if', @_);
     };
     my $add_if_ref = sub {
         my ($ref, $act0) = @_;
         $add_if->("\$ref eq '$ref'", $act0);
     };
+    my $add_new_if_ref = sub {
+        my ($ref, $act0) = @_;
+        $add_new_if->("\$ref eq '$ref'", $act0);
+    };
 
-    my $circ = $opts->{-circular};
-    if ($circ) {
-        my $meth = "command_$circ->[0]";
-        die "Can't handle command $circ->[0] for option '-circular'" unless $self->can($meth);
-        my @args = @$circ; shift @args;
-        my $act = $self->$meth(\@args);
-        $add_if->('$ref && $refs{ {{var}} }++', $act);
-    }
-
+    # catch object of specified classes (e.g. DateTime, etc)
     for my $on (grep {/\A\w*(::\w+)*\z/} sort keys %$opts) {
         my $o = $opts->{$on};
         next unless $o;
@@ -136,10 +163,34 @@ sub _generate_cleanser_code {
         my $act = $self->$meth(\@args);
         $add_if_ref->($on, $act);
     }
-    $add_if_ref->("ARRAY", '$process_array->({{var}})');
+
+    # catch general object not caught by previous
+    for my $p ([-obj => 'blessed({{var}})']) {
+        my $o = $opts->{$p->[0]};
+        next unless $o;
+        my $meth = "command_$o->[0]";
+        die "Can't handle command $o->[0] for option '$p->[0]'" unless $self->can($meth);
+        my @args = @$o; shift @args;
+        $add_if->($p->[1], $self->$meth(\@args));
+    }
+
+    # catch circular references
+    my $circ = $opts->{-circular};
+    if ($circ) {
+        my $meth = "command_$circ->[0]";
+        die "Can't handle command $circ->[0] for option '-circular'" unless $self->can($meth);
+        my @args = @$circ; shift @args;
+        my $act = $self->$meth(\@args);
+        #$add_stmt->('stmt', 'say "ref=$ref, " . {{var}}'); # DEBUG
+        $add_new_if->('$ref && $refs{ {{var}} }++', $act);
+    }
+
+    # recurse array and hash
+    $add_new_if_ref->("ARRAY", '$process_array->({{var}})');
     $add_if_ref->("HASH" , '$process_hash->({{var}})');
 
-    for my $p ([-obj => 'blessed({{var}})'], [-ref => '$ref']) {
+    # lastly, catch any reference left
+    for my $p ([-ref => '$ref']) {
         my $o = $opts->{$p->[0]};
         next unless $o;
         my $meth = "command_$o->[0]";
@@ -154,10 +205,10 @@ sub _generate_cleanser_code {
     push @code, 'state $ctr_circ;'."\n" if $circ;
     push @code, 'state $process_array;'."\n";
     push @code, 'state $process_hash;'."\n";
-    push @code, 'if (!$process_array) { $process_array = sub { my $a = shift; for my $e (@$a) { my $ref=ref($e);'."\n".join("", @ifs_ary).'} } }'."\n";
-    push @code, 'if (!$process_hash) { $process_hash = sub { my $h = shift; for my $k (keys %$h) { my $ref=ref($h->{$k});'."\n".join("", @ifs_hash).'} } }'."\n";
+    push @code, 'if (!$process_array) { $process_array = sub { my $a = shift; for my $e (@$a) { my $ref=ref($e);'."\n".join("", @stmts_ary).'} } }'."\n";
+    push @code, 'if (!$process_hash) { $process_hash = sub { my $h = shift; for my $k (keys %$h) { my $ref=ref($h->{$k});'."\n".join("", @stmts_hash).'} } }'."\n";
     push @code, '%refs = (); $ctr_circ=0;'."\n" if $circ;
-    push @code, 'for ($data) { my $ref=ref($_);'."\n".join("", @ifs_main).'}'."\n";
+    push @code, 'for ($data) { my $ref=ref($_);'."\n".join("", @stmts_main).'}'."\n";
     push @code, '$data'."\n";
     push @code, '}'."\n";
 
