@@ -1,5 +1,12 @@
 Revision history for Data-Clean-JSON
 
+0.21    2015-03-26 (PERLANCAR)
+
+	- No functional changes.
+
+	- Replace Log::Any with Log::Any::IfLOG.
+
+
 0.20    2014-12-10 (PERLANCAR)
 
 	- No functional changes.
