@@ -1,5 +1,14 @@
 Revision history for Data-Clean-JSON
 
+0.22    2015-03-26 (PERLANCAR)
+
+	- Convert Time::Moment objects like DateTime objects (convert them
+	  to epoch value), BTW the fallback unbless routine in
+	  Function::Fallback::CoreOrPP seems to have a problem in
+	  unblessing Time::Moment objects, but it doesn't have a problem
+	  unblessing other blessed scalar refs.
+
+
 0.21    2015-03-26 (PERLANCAR)
 
 	- No functional changes.
