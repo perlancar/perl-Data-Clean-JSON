@@ -12,6 +12,7 @@ use parent qw(Data::Clean::Base);
 sub new {
     my ($class, %opts) = @_;
     $opts{DateTime}  //= [call_method => 'epoch'];
+    $opts{'Time::Moment'} //= [call_method => 'epoch'];
     $opts{Regexp}    //= ['stringify'];
     $opts{SCALAR}    //= ['deref_scalar'];
     $opts{-ref}      //= ['replace_with_ref'];
