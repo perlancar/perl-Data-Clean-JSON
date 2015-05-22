@@ -1,5 +1,12 @@
 Revision history for Data-Clean-JSON
 
+0.26    2015-05-23 (PERLANCAR)
+
+	- No functional changes.
+
+	- [Bugfix] Don't assume Scalar::Util's blessed has been imported.
+
+
 0.25    2015-05-23 (PERLANCAR)
 
 	- Put generate cleanser code in 'src'.
