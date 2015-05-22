@@ -1,5 +1,10 @@
 Revision history for Data-Clean-JSON
 
+0.25    2015-05-23 (PERLANCAR)
+
+	- Put generate cleanser code in 'src'.
+
+
 0.24    2015-03-26 (PERLANCAR)
 
 	- Change the default clone limit from 50 to 1, as this is now the
