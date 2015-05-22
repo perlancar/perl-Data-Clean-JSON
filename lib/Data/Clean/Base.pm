@@ -9,7 +9,7 @@ use warnings;
 use Log::Any::IfLOG '$log';
 
 use Function::Fallback::CoreOrPP qw(clone);
-use Scalar::Util qw(blessed);
+use Scalar::Util qw();
 
 sub new {
     my ($class, %opts) = @_;
@@ -165,7 +165,7 @@ sub _generate_cleanser_code {
     }
 
     # catch general object not caught by previous
-    for my $p ([-obj => 'blessed({{var}})']) {
+    for my $p ([-obj => 'Scalar::Util::blessed({{var}})']) {
         my $o = $opts->{$p->[0]};
         next unless $o;
         my $meth = "command_$o->[0]";
