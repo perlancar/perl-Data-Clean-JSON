@@ -213,6 +213,7 @@ sub _generate_cleanser_code {
     push @code, '}'."\n";
 
     my $code = join("", @code).";";
+
     if ($ENV{LOG_CLEANSER_CODE} && $log->is_trace) {
         require String::LineNumber;
         $log->tracef("Cleanser code:\n%s",
@@ -221,6 +222,7 @@ sub _generate_cleanser_code {
     }
     eval "\$self->{code} = $code";
     die "Can't generate code: $@" if $@;
+    $self->{src} = $code;
 }
 
 sub clean_in_place {
