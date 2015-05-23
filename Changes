@@ -2,21 +2,22 @@ Revision history for Data-Clean-JSON
 
 0.26    2015-05-23 (PERLANCAR)
 
-	- No functional changes.
+        - No functional changes.
 
-	- [Bugfix] Don't assume Scalar::Util's blessed has been imported.
+        - [Bugfix] Don't assume Scalar::Util's blessed has been imported.
 
 
 0.25    2015-05-23 (PERLANCAR)
 
-	- Put generate cleanser code in 'src'.
+        - Put generated cleanser code in 'src', for other tools that might need
+          it (e.g. Perinci::CmdLine::Inline).
 
 
 0.24    2015-03-26 (PERLANCAR)
 
-	- Change the default clone limit from 50 to 1, as this is now the
-	  more sensible default now that the previous release has fixed
-	  clone limit counting for converted objects.
+        - Change the default clone limit from 50 to 1, as this is now the more
+          sensible default now that the previous release has fixed clone limit
+          counting for converted objects.
 
 
 0.23    2015-03-26 (PERLANCAR)
