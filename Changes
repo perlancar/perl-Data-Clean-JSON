@@ -1,5 +1,12 @@
 Revision history for Data-Clean-JSON
 
+0.28    2015-06-10 (PERLANCAR)
+
+	- No functional changes.
+
+	- Mention Data::Abridge.
+
+
 0.27    2015-06-08 (PERLANCAR)
 
         - No functional changes.
