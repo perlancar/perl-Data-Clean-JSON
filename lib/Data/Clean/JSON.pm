@@ -163,4 +163,11 @@ L<Data::Rmap>
 
 L<Data::Visitor::Callback>
 
+L<Data::Abridge> is similar in goal, which is to let Perl data structures (which
+might contain stuffs unsupported in JSON) be encodeable to JSON. But unlike
+Data::Clean::JSON, it has some (currently) non-configurable rules, like changing
+a coderef with a hash C<< {CODE=>'\&main::__ANON__'} >> or a scalar ref with C<<
+{SCALAR=>'value'} >> and so on. Note that the abridging process is similarly
+unidirectional (you cannot convert back the original Perl data structure).
+
 =cut
