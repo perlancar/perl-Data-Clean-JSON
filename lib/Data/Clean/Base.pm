@@ -277,18 +277,18 @@ This will replace a reference like C<{}> with C<HASH>.
 
 This will replace a reference like C<{}> with I<STR>.
 
-=item * ['call_method']
+=item * ['call_method' => STR]
 
-This will call a method and use its return as the replacement. For example:
-DateTime->from_epoch(epoch=>1000) when processed with [call_method => 'epoch']
-will become 1000.
+This will call a method named I<STR> and use its return as the replacement. For
+example: C<< DateTime->from_epoch(epoch=>1000) >> when processed with C<<
+[call_method => 'epoch'] >> will become 1000.
 
 =item * ['call_func', STR]
 
-This will call a function named STR with value as argument and use its return as
-the replacement.
+This will call a function named I<STR> with value as argument and use its return
+as the replacement.
 
-=item * ['one_or_zero', STR]
+=item * ['one_or_zero']
 
 This will perform C<< $val ? 1:0 >>.
 
@@ -303,7 +303,7 @@ Should be done only for objects (C<-obj>).
 
 =item * ['code', STR]
 
-This will replace with STR treated as Perl code.
+This will replace with I<STR> treated as Perl code.
 
 =item * ['clone', INT]
 
