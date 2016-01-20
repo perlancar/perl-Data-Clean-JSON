@@ -17,13 +17,15 @@ $cdata = $c->clean_in_place({
     code   => sub{} ,
     date   => DateTime->from_epoch(epoch=>1001),
     scalar => \1,
+    version => version->parse('1.2'),
     obj    => bless({},"Foo"),
 });
 is_deeply($cdata, {
-    code   => "CODE",
-    date   => 1001,
-    scalar => 1 ,
-    obj    => {},
+    code    => "CODE",
+    date    => 1001,
+    scalar  => 1 ,
+    version => '1.2',
+    obj     => {},
 }, "cleaning up");
 
 {
