@@ -182,11 +182,11 @@ sub _generate_cleanser_code {
         my @args = @$circ; shift @args;
         my $act = $self->$meth(\@args);
         #$add_stmt->('stmt', 'say "ref=$ref, " . {{var}}'); # DEBUG
-        $add_new_if->('$ref && $refs{ {{var}} }++', $act);
+        $add_if->('$ref && $refs{ {{var}} }++', $act);
     }
 
     # recurse array and hash
-    $add_new_if_ref->("ARRAY", '$process_array->({{var}})');
+    $add_if_ref->("ARRAY", '$process_array->({{var}})');
     $add_if_ref->("HASH" , '$process_hash->({{var}})');
 
     # lastly, catch any reference left
