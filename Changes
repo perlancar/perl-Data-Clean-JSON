@@ -1,5 +1,16 @@
 Revision history for Data-Clean-JSON
 
+0.29    2016-01-20 (PERLANCAR)
+
+	- Stringify version objects.
+
+	- [Bugfix] Stringifying Regexp erroneously becomes literal 'Regexp'
+	  instead of its stringified value because we generate a new 'if'
+	  clause when it should be 'elsif'.
+
+	- Bump prereq version Log::Any::IfLOG to 0.07.
+
+
 0.28    2015-06-10 (PERLANCAR)
 
 	- No functional changes.
