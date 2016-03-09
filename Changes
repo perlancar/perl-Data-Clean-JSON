@@ -1,5 +1,11 @@
 Revision history for Data-Clean-JSON
 
+0.30    2016-03-09 (PERLANCAR)
+
+	- Remove usage of JSON module in test, handle
+	  Cpanel::JSON::XS::Boolean.
+
+
 0.29    2016-01-20 (PERLANCAR)
 
 	- Stringify version objects.
