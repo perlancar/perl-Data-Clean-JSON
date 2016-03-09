@@ -11,8 +11,14 @@ use parent qw(Data::Clean::Base);
 
 sub new {
     my ($class, %opts) = @_;
-    $opts{"JSON::XS::Boolean"} //= ['one_or_zero'];
     $opts{"JSON::PP::Boolean"} //= ['one_or_zero'];
+
+    # this does not exist though
+    $opts{"JSON::XS::Boolean"} //= ['one_or_zero'];
+
+    # this does not exist though
+    $opts{"Cpanel::JSON::XS::Boolean"} //= ['one_or_zero'];
+
     $class->SUPER::new(%opts);
 }
 

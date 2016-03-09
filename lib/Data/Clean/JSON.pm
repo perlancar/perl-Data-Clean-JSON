@@ -15,6 +15,7 @@ sub new {
     $opts{'Time::Moment'} //= [call_method => 'epoch'];
     $opts{Regexp}    //= ['stringify'];
     $opts{version}   //= ['stringify'];
+
     $opts{SCALAR}    //= ['deref_scalar'];
     $opts{-ref}      //= ['replace_with_ref'];
     $opts{-circular} //= ['clone'];
