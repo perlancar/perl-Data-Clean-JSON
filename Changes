@@ -1,5 +1,11 @@
 Revision history for Data-Clean-JSON
 
+0.31    2016-03-30 (PERLANCAR)
+
+	- Introduce option "!recurse_obj" to recurse into hash-/array-based
+	  objects.
+
+
 0.30    2016-03-09 (PERLANCAR)
 
 	- Remove usage of JSON module in test, handle
