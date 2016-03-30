@@ -216,20 +216,20 @@ sub _generate_cleanser_code {
     push @code, (
         'if (!$process_array) { $process_array = sub { my $a = shift; for my $e (@$a) { ',
         'my $ref=ref($e);',
-        ($opts->{'!recurse_obj'} ? ' my $reftype=Scalar::Util::reftype($e);':''), "\n",
+        ($opts->{'!recurse_obj'} ? ' my $reftype=Scalar::Util::reftype($e)//"";':''), "\n",
         join("", @stmts_ary).'} } }'."\n"
     );
     push @code, (
         'if (!$process_hash) { $process_hash = sub { my $h = shift; for my $k (keys %$h) { ',
         'my $ref=ref($h->{$k});',
-        ($opts->{'!recurse_obj'} ? ' my $reftype=Scalar::Util::reftype($h->{$k});':''), "\n",
+        ($opts->{'!recurse_obj'} ? ' my $reftype=Scalar::Util::reftype($h->{$k})//"";':''), "\n",
         join("", @stmts_hash).'} } }'."\n"
     );
     push @code, '%refs = (); $ctr_circ=0;'."\n" if $circ;
     push @code, (
         'for ($data) { ',
         'my $ref=ref($_);',
-        ($opts->{'!recurse_obj'} ? ' my $reftype=Scalar::Util::reftype($_);':''), "\n",
+        ($opts->{'!recurse_obj'} ? ' my $reftype=Scalar::Util::reftype($_)//"";':''), "\n",
         join("", @stmts_main).'}'."\n"
     );
     push @code, '$data'."\n";
