@@ -153,6 +153,13 @@ sub _generate_cleanser_code {
         $add_new_if->("\$ref eq '$ref'", $act0);
     };
 
+    # recurse into hash- or array-based object if !recurse_obj option is true
+    if ($opts->{'!recurse_obj'}) {
+        # XXX optimize, avoid calling reftype() twice
+        $add_if->('$reftype eq "ARRAY"', '$process_array->({{var}})');
+        $add_if->('$reftype eq "HASH"' , '$process_hash->({{var}})');
+    }
+
     # catch object of specified classes (e.g. DateTime, etc)
     for my $on (grep {/\A\w*(::\w+)*\z/} sort keys %$opts) {
         my $o = $opts->{$on};
@@ -200,15 +207,31 @@ sub _generate_cleanser_code {
     }
 
     push @code, 'sub {'."\n";
+    push @code, 'require Scalar::Util;'."\n" if $opts->{'!recurse_obj'};
     push @code, 'my $data = shift;'."\n";
     push @code, 'state %refs;'."\n" if $circ;
     push @code, 'state $ctr_circ;'."\n" if $circ;
     push @code, 'state $process_array;'."\n";
     push @code, 'state $process_hash;'."\n";
-    push @code, 'if (!$process_array) { $process_array = sub { my $a = shift; for my $e (@$a) { my $ref=ref($e);'."\n".join("", @stmts_ary).'} } }'."\n";
-    push @code, 'if (!$process_hash) { $process_hash = sub { my $h = shift; for my $k (keys %$h) { my $ref=ref($h->{$k});'."\n".join("", @stmts_hash).'} } }'."\n";
+    push @code, (
+        'if (!$process_array) { $process_array = sub { my $a = shift; for my $e (@$a) { ',
+        'my $ref=ref($e);',
+        ($opts->{'!recurse_obj'} ? ' my $reftype=Scalar::Util::reftype($e);':''), "\n",
+        join("", @stmts_ary).'} } }'."\n"
+    );
+    push @code, (
+        'if (!$process_hash) { $process_hash = sub { my $h = shift; for my $k (keys %$h) { ',
+        'my $ref=ref($h->{$k});',
+        ($opts->{'!recurse_obj'} ? ' my $reftype=Scalar::Util::reftype($h->{$k});':''), "\n",
+        join("", @stmts_hash).'} } }'."\n"
+    );
     push @code, '%refs = (); $ctr_circ=0;'."\n" if $circ;
-    push @code, 'for ($data) { my $ref=ref($_);'."\n".join("", @stmts_main).'}'."\n";
+    push @code, (
+        'for ($data) { ',
+        'my $ref=ref($_);',
+        ($opts->{'!recurse_obj'} ? ' my $reftype=Scalar::Util::reftype($_);':''), "\n",
+        join("", @stmts_main).'}'."\n"
+    );
     push @code, '$data'."\n";
     push @code, '}'."\n";
 
@@ -250,14 +273,22 @@ sub clone_and_clean {
 Create a new instance.
 
 Options specify what to do with problematic data. Option keys are either
-reference types or class names, or C<-obj> (to refer to objects, a.k.a. blessed
-references), C<-circular> (to refer to circular references), C<-ref> (to refer
-to references, used to process references not handled by other options). Option
-values are arrayrefs, the first element of the array is command name, to specify
-what to do with the reference/class. The rest are command arguments.
+reference types (like C<HASH>, C<ARRAY>, C<SCALAR>) or class names (like
+C<Foo::Bar>), or C<-obj> (to match all kinds of objects, a.k.a. blessed
+references), C<-circular> (to match circular references), C<-ref> (to refer to
+any kind of references, used to process references not handled by other
+options). Option values are arrayrefs, the first element of the array is command
+name, to specify what to do with the reference/class. The rest are command
+arguments.
 
 Note that arrayrefs and hashrefs are always walked into, so it's not trapped by
 C<-ref>.
+
+Option keys that start with C<!> are special: C<!recurse_object> (bool) which
+can be set to true to to recurse into objects if they are hash- or array-based.
+By default objects are not recursed into. Note that if you enable this option,
+object options (like C<Foo::Bar> or C<-obj>) won't work for hash- and
+array-based objects because they will be recursed instead.
 
 Default for C<%opts>: C<< -ref => 'stringify' >>.
 

@@ -72,6 +72,33 @@ subtest "selector: ''" => sub {
     is_deeply($cdata, {a=>[], b=>"X", c=>"X", d=>"X"});
 };
 
+subtest "option: !recurse_obj" => sub {
+    my $c;
+    my $cdata;
+
+    $c = Data::Clean::Base->new(
+        CODE => ["replace_with_ref"],
+    );
+
+    $cdata = $c->clean_in_place({a=>sub{}});
+    is_deeply($cdata, {a=>"CODE"});
+
+    $cdata = $c->clean_in_place(bless({a=>sub{}}, "Foo"));
+    is(ref($cdata->{a}), "CODE");
+
+    $c = Data::Clean::Base->new(
+        CODE => ["replace_with_ref"],
+        '!recurse_obj' => 1,
+    );
+
+    $cdata = $c->clean_in_place({a=>sub{}});
+    is_deeply($cdata, {a=>"CODE"});
+
+    $cdata = $c->clean_in_place(bless({a=>sub{}}, "Foo"));
+    is_deeply($cdata, bless({a=>"CODE"}, "Foo"));
+
+};
+
 # command: call_method is tested via json
 # command: one_or_zero is tested via json
 # command: deref_scalar is tested via json
