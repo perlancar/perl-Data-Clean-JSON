@@ -1,5 +1,11 @@
 Revision history for Data-Clean-JSON
 
+0.33    2016-04-14 (PERLANCAR)
+
+	- Split Data::Clean::Base to its own dist as Data::Clean, rebase on
+	  Data::Clean.
+
+
 0.32    2016-03-30 (PERLANCAR)
 
 	- Avoid perl undef warning because Scalar::Util::reftype() might
