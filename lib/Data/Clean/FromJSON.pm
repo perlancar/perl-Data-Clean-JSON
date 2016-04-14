@@ -7,7 +7,7 @@ use 5.010001;
 use strict;
 use warnings;
 
-use parent qw(Data::Clean::Base);
+use parent qw(Data::Clean);
 
 sub new {
     my ($class, %opts) = @_;
@@ -53,13 +53,7 @@ This class can convert L<JSON::PP::Boolean> (or C<JSON::XS::Boolean>) objects to
 Return a singleton instance, with default options. Use C<new()> if you want to
 customize options.
 
-=head2 CLASS->new(%opts) => $obj
-
-Create a new instance. For list of known options, see L<Data::Clean::Base>.
-Data::Clean::FromJSON sets some defaults.
-
-    "JSON::PP::Boolean" => ['one_or_zero']
-    "JSON::XS::Boolean" => ['one_or_zero']
+=head2 CLASS->new() => $obj
 
 =head2 $obj->clean_in_place($data) => $cleaned
 
@@ -77,7 +71,7 @@ LOG_CLEANSER_CODE
 
 =head1 FAQ
 
-=head2 Why am I getting 'Modification of a read-only value attempted at lib/Data/Clean/Base.pm line xxx'?
+=head2 Why am I getting 'Modification of a read-only value attempted at lib/Data/Clean.pm line xxx'?
 
 [2013-10-15 ] This is also from Data::Clone::clone() when it encounters
 JSON::{PP,XS}::Boolean objects. You can use clean_in_place() instead of

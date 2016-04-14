@@ -7,7 +7,7 @@ use 5.010001;
 use strict;
 use warnings;
 
-use parent qw(Data::Clean::Base);
+use parent qw(Data::Clean);
 
 sub new {
     my ($class, %opts) = @_;
@@ -54,7 +54,24 @@ sub get_cleanser {
 =head1 DESCRIPTION
 
 This class cleans data from anything that might be problematic when encoding to
-JSON. This includes coderefs, globs, and so on.
+JSON. This includes coderefs, globs, and so on. Here's what it will do by
+default:
+
+=over
+
+=item * Change DateTime and Time::Moment object to its epoch value
+
+=item * Change Regexp and version object to its string value
+
+=item * Change scalar references (e.g. \1) to its scalar value (e.g. 1)
+
+=item * Change other references (non-hash, non-array) to its ref() value (e.g. "GLOB", "CODE")
+
+=item * Clone circular references
+
+=item * Unbless other types of objects
+
+=back
 
 Data that has been cleaned will probably not be convertible back to the
 original, due to information loss (for example, coderefs converted to string
@@ -84,17 +101,9 @@ L<Log::Any::App>:
 Return a singleton instance, with default options. Use C<new()> if you want to
 customize options.
 
-=head2 CLASS->new(%opts) => $obj
+=head2 CLASS->new() => $obj
 
-Create a new instance. For list of known options, see L<Data::Clean::Base>.
-Data::Clean::JSON sets some defaults.
-
-    DateTime  => [call_method => 'epoch']
-    Regexp    => ['stringify']
-    SCALAR    => ['deref_scalar']
-    -ref      => ['replace_with_ref']
-    -circular => ['clone']
-    -obj      => ['unbless']
+Create a new instance.
 
 =head2 $obj->clean_in_place($data) => $cleaned
 
@@ -151,7 +160,7 @@ Benchmark:
 
 The less number of checks you do, the faster the cleansing process will be.
 
-=head2 Why am I getting 'Not a CODE reference at lib/Data/Clean/Base.pm line xxx'?
+=head2 Why am I getting 'Not a CODE reference at lib/Data/Clean.pm line xxx'?
 
 [2013-08-07 ] This error message is from Data::Clone::clone() when it is cloning
 an object. If you are cleaning objects, instead of using clone_and_clean(), try
