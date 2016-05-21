@@ -1,5 +1,11 @@
 Revision history for Data-Clean-JSON
 
+0.34    2016-05-21 (PERLANCAR)
+
+	- [Incompatible change] By default now recurses into object (see
+	  !recurse_object option in Data::Clean documentation).
+
+
 0.33    2016-04-14 (PERLANCAR)
 
 	- Split Data::Clean::Base to its own dist as Data::Clean, rebase on
