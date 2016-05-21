@@ -20,6 +20,8 @@ sub new {
     $opts{-ref}      //= ['replace_with_ref'];
     $opts{-circular} //= ['clone'];
     $opts{-obj}      //= ['unbless'];
+
+    $opts{'!recurse_object'} //= 1;
     $class->SUPER::new(%opts);
 }
 
