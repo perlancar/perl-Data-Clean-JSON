@@ -21,7 +21,7 @@ sub new {
     $opts{-circular} //= ['clone'];
     $opts{-obj}      //= ['unbless'];
 
-    $opts{'!recurse_object'} //= 1;
+    $opts{'!recurse_obj'} //= 1;
     $class->SUPER::new(%opts);
 }
 
@@ -74,6 +74,8 @@ default:
 =item * Unbless other types of objects
 
 =back
+
+Cleaning recurses into objects.
 
 Data that has been cleaned will probably not be convertible back to the
 original, due to information loss (for example, coderefs converted to string
