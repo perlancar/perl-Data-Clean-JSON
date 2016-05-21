@@ -1,5 +1,13 @@
 Revision history for Data-Clean-JSON
 
+0.35    2016-05-21 (PERLANCAR)
+
+        - [Bugfix] Previous release did not correctly set recurse object option,
+          the correct option is !recurse_obj (wrong Data::Clean documentation).
+
+        - [dist] Bump prereq version Data::Clean to 0.35.
+
+
 0.34    2016-05-21 (PERLANCAR)
 
 	- [Incompatible change] By default now recurses into object (see
