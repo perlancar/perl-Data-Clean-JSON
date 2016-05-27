@@ -4,7 +4,7 @@ use 5.010;
 use strict;
 use warnings;
 
-use Data::Clean::JSON;
+use Data::Clean::JSON qw(clean_json_in_place clone_and_clean_json);
 use DateTime;
 use Scalar::Util qw(blessed);
 use Test::More 0.98;
@@ -55,5 +55,13 @@ subtest "unbless modifies original object when using clean_in_place()" => sub {
 };
 
 # XXX test: re
+
+subtest "non-oo functions" => sub {
+    my $data = [sub {}];
+    my $cleaned = clone_and_clean_json($data);
+    is_deeply($cleaned, ["CODE"]);
+    clean_json_in_place($data);
+    is_deeply($data, ["CODE"]);
+};
 
 done_testing();

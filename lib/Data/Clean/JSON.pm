@@ -9,6 +9,12 @@ use warnings;
 
 use parent qw(Data::Clean);
 
+use Exporter qw(import);
+our @EXPORT_OK = qw(
+                       clean_json_in_place
+                       clone_and_clean_json
+               );
+
 sub new {
     my ($class, %opts) = @_;
     $opts{DateTime}  //= [call_method => 'epoch'];
@@ -31,6 +37,14 @@ sub get_cleanser {
     $singleton;
 }
 
+sub clean_json_in_place {
+    __PACKAGE__->get_cleanser->clean_in_place(@_);
+}
+
+sub clone_and_clean_json {
+    __PACKAGE__->get_cleanser->clone_and_clean(@_);
+}
+
 1;
 # ABSTRACT: Clean data so it is safe to output to JSON
 
@@ -51,6 +65,16 @@ sub get_cleanser {
  # now output it
  use JSON;
  print encode_json($cleaned); # prints '{"code":"CODE","re":"(?^i:abc)"}'
+
+Functional shortcuts:
+
+ use Data::Clean::JSON qw(clean_json_in_place clone_and_clean_json);
+
+ # equivalent to Data::Clean::JSON->get_cleanser->clean_in_place($data)
+ clean_json_in_place($data);
+
+ # equivalent to Data::Clean::JSON->get_cleanser->clone_and_clean($data)
+ $cleaned = clone_and_clean_json($data);
 
 
 =head1 DESCRIPTION
@@ -96,6 +120,23 @@ L<Log::Any::App>:
 
  % LOG=1 LOG_CLEANSER_CODE=1 TRACE=1 perl -MLog::Any::App -MData::Clean::JSON \
    -e'$c=Data::Clean::JSON->new; ...'
+
+
+=head1 FUNCTIONS
+
+None of the functions are exported by default.
+
+=head2 clean_json_in_place($data)
+
+A shortcut for:
+
+ Data::Clean::JSON->get_cleanser->clean_in_place($data)
+
+=head2 clone_and_clean_json($data) => $cleaned
+
+A shortcut for:
+
+ $cleaned = Data::Clean::JSON->get_cleanser->clone_and_clean($data)
 
 
 =head1 METHODS
