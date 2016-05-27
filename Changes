@@ -1,5 +1,11 @@
 Revision history for Data-Clean-JSON
 
+0.36    2016-05-27 (PERLANCAR)
+
+        - Introduce shortcut non-OO functions: clean_json_in_place,
+          clone_and_clean_json.
+
+
 0.35    2016-05-21 (PERLANCAR)
 
         - [Bugfix] Previous release did not correctly set recurse object option,
