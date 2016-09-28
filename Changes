@@ -1,5 +1,10 @@
 Revision history for Data-Clean-JSON
 
+0.37    2016-09-28 (PERLANCAR)
+
+	- Convert bigints (Math::BigInt objects) into strings.
+
+
 0.36    2016-05-27 (PERLANCAR)
 
         - Introduce shortcut non-OO functions: clean_json_in_place,
