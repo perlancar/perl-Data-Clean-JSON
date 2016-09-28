@@ -19,6 +19,7 @@ sub new {
     my ($class, %opts) = @_;
     $opts{DateTime}  //= [call_method => 'epoch'];
     $opts{'Time::Moment'} //= [call_method => 'epoch'];
+    $opts{'Math::BigInt'} //= [call_method => 'bstr'];
     $opts{Regexp}    //= ['stringify'];
     $opts{version}   //= ['stringify'];
 
