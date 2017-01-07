@@ -1,5 +1,3 @@
-Revision history for Data-Clean-JSON
-
 0.37    2016-09-28 (PERLANCAR)
 
 	- Convert bigints (Math::BigInt objects) into strings.
