@@ -1,3 +1,10 @@
+0.391   2018-10-09 (PERLANCAR)
+
+	- No functional changes.
+
+	- [doc] Explain more about cloning circular references.
+
+
 0.390   2018-10-09 (PERLANCAR)
 
         - Bump prereq version Data::Clean to 0.500, which replaces cloning
