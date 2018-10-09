@@ -28,6 +28,7 @@ sub new {
     $opts{-circular} //= ['clone'];
     $opts{-obj}      //= ['unbless'];
 
+    $opts{'!clone_func'} //= 'Clone::PP::clone';
     $opts{'!recurse_obj'} //= 1;
     $class->SUPER::new(%opts);
 }
