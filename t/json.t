@@ -3,11 +3,14 @@
 use 5.010;
 use strict;
 use warnings;
+use Test::Exception;
+use Test::More 0.98;
+use Test::Needs;
 
 use Data::Clean::JSON qw(clean_json_in_place clone_and_clean_json);
 use DateTime;
+use JSON;
 use Scalar::Util qw(blessed);
-use Test::More 0.98;
 
 my $c = Data::Clean::JSON->get_cleanser;
 my $data;
@@ -64,4 +67,48 @@ subtest "non-oo functions" => sub {
     is_deeply($data, ["CODE"]);
 };
 
-done_testing();
+subtest "Clone::PP" => sub {
+    my $c = Data::Clean::JSON->new(
+        '!clone_func' => 'Clone::PP::clone',
+    );
+    my $json = JSON::from_json('[true, false]');
+    is_deeply($c->clone_and_clean($json), [1,0]);
+    is_deeply($c->clean_in_place($json), [1,0]);
+};
+
+subtest "Clone" => sub {
+    test_needs "Clone";
+
+    my $c = Data::Clean::JSON->new(
+        '!clone_func' => 'Clone::clone',
+    );
+    my $json = JSON::from_json('[true, false]');
+    is_deeply($c->clone_and_clean($json), [1,0]);
+    is_deeply($c->clean_in_place($json), [1,0]);
+};
+
+subtest "Data::Clone" => sub {
+    plan skip_all => "Data::Clone currently cannot clone JSON::PP::Boolean objects";
+    test_needs "Data::Clone";
+
+    my $c = Data::Clean::JSON->new(
+        '!clone_func' => 'Data::Clone::clone',
+    );
+    my $json = JSON::from_json('[true, false]');
+    is_deeply($c->clone_and_clean($json), [1,0]);
+    is_deeply($c->clean_in_place($json), [1,0]);
+};
+
+subtest "Sereal::Dclone" => sub {
+    test_needs "Sereal::Dclone";
+
+    my $c = Data::Clean::JSON->new(
+        '!clone_func' => 'Sereal::Dclone::dclone',
+    );
+    my $json = JSON::from_json('[true, false]');
+    is_deeply($c->clone_and_clean($json), [1,0]);
+    is_deeply($c->clean_in_place($json), [1,0]);
+};
+
+DONE_TESTING:
+done_testing;

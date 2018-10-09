@@ -17,6 +17,12 @@ our @EXPORT_OK = qw(
 
 sub new {
     my ($class, %opts) = @_;
+
+    # from FromJSON
+    $opts{"JSON::PP::Boolean"} //= ['one_or_zero'];
+    $opts{"JSON::XS::Boolean"} //= ['one_or_zero']; # this doesn't exist though
+    $opts{"Cpanel::JSON::XS::Boolean"} //= ['one_or_zero']; # this doesn't exist though
+
     $opts{DateTime}  //= [call_method => 'epoch'];
     $opts{'Time::Moment'} //= [call_method => 'epoch'];
     $opts{'Math::BigInt'} //= [call_method => 'bstr'];
@@ -28,7 +34,6 @@ sub new {
     $opts{-circular} //= ['clone'];
     $opts{-obj}      //= ['unbless'];
 
-    $opts{'!clone_func'} //= 'Clone::PP::clone';
     $opts{'!recurse_obj'} //= 1;
     $class->SUPER::new(%opts);
 }
