@@ -102,6 +102,19 @@ default:
 
 =item * Clone circular references
 
+With a default limit of 1, meaning that if a reference is first seen again for
+the first time, it will be cloned. But if it is seen again for the second time,
+it will be replaced with "CIRCULAR".
+
+To change the default limit, customize your cleanser object:
+
+ $cleanser = Data::Clean::JSON->new(
+     -circular => ["clone", 4],
+ );
+
+or you can perform other action for circular references, see L<Data::Clean> for
+more details.
+
 =item * Unbless other types of objects
 
 =back
