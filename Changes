@@ -1,3 +1,12 @@
+0.392   2019-09-11  Released-By: PERLANCAR; Urgency: low
+
+        - Deprecate this distribution, as it has now been renamed to
+          Data-Clean-ForJSON.
+
+        - Release a new version that removes Data::Clean::FromJSON to resolve
+          conflict because it now lives in Data-Clean-ForJSON [RT#130441].
+
+
 0.391   2018-10-09  Released-By: PERLANCAR
 
 	- No functional changes.
