@@ -53,7 +53,7 @@ sub clone_and_clean_json {
 }
 
 1;
-# ABSTRACT: Clean data so it is safe to output to JSON
+# ABSTRACT: (DEPRECATED) Clean data so it is safe to output to JSON
 
 =head1 SYNOPSIS
 
@@ -85,6 +85,10 @@ Functional shortcuts:
 
 
 =head1 DESCRIPTION
+
+B<DEPRECATION NOTICE:> This module has been renamed to L<Data::Clean::ForJSON>
+for more clarity. This old name is retained because there are distributions
+still depending on it.
 
 This class cleans data from anything that might be problematic when encoding to
 JSON. This includes coderefs, globs, and so on. Here's what it will do by
